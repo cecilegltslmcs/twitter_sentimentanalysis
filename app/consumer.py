@@ -2,10 +2,12 @@ from kafka import KafkaConsumer
 import json
 
 topic_name = 'twitter'
+ip_server = "51.38.185.58:9092"
+
 
 consumer = KafkaConsumer(
     topic_name,
-     bootstrap_servers=['localhost:9092'],
+     bootstrap_servers=[ip_server],
      auto_offset_reset='latest',
      enable_auto_commit=True,
      auto_commit_interval_ms=5000,
