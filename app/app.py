@@ -1,4 +1,5 @@
 from pyspark.sql import functions as F
+import auth_token as auth
 from pyspark.sql.types import StringType, StructType, StructField, FloatType
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import from_json, col
@@ -8,7 +9,7 @@ import findspark
 
 findspark.init()
 
-ip_server="51.38.185.58:9092"
+ip_server=auth.bootstrap_server
 
 analyzer = SentimentIntensityAnalyzer()
 
@@ -62,31 +63,27 @@ if __name__ == "__main__":
     
     sc = spark.sparkContext.setLogLevel("ERROR")
 
+    raw_json = spark.read.json("tweet.json", multiLine=True)
+
     df = spark \
         .readStream \
         .format("kafka") \
         .option("kafka.bootstrap.servers", ip_server)\
         .option("subscribe", "twitter-mac") \
         .load()\
-        .selectExpr("CAST(value AS STRING)")
-        
-    df.printSchema()
-    # mySchema = StructType([StructField("text", StringType(), True)])
-    # Get only the "text" from the information we receive from Kafka. The text is the tweet produce by a user
-    #values = df.select(col("key").cast("string"), from_json(col("value").cast("string"), df.schema).alias("tweet"))
-    #values.printSchema()
+        .withColumn("value", from_json(col("value").cast("string"), raw_json.schema))\
+        .select(col('value.data.text'))
 
-    """df1 = df.select("value.*")
     clean_tweets = F.udf(cleanTweet, StringType())
-    raw_tweets = df1.withColumn('processed_text', clean_tweets(col("text")))
+    raw_tweets = df.withColumn('processed_text', clean_tweets(col("text")))
 
     polarity = F.udf(getPolarity, FloatType())
     sentiment = F.udf(getSentiment, StringType())
 
     polarity_tweets = raw_tweets.withColumn("polarity", polarity(col("processed_text")))
-    sentiment_tweets = polarity_tweets.withColumn("sentiment", sentiment(col("polarity")))"""
+    sentiment_tweets = polarity_tweets.withColumn("sentiment", sentiment(col("polarity")))
 
-    query = df\
+    query = sentiment_tweets\
             .writeStream\
             .queryName("test_tweets") \
             .outputMode("append")\

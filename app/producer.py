@@ -1,15 +1,16 @@
 import tweepy
+import auth_token as auth
 from kafka import KafkaProducer
 import logging
 
 """API ACCESS KEYS"""
 
-# consumerKey = "consumerKey"
-# consumerSecret = "consumerSecret"
-# accessToken = "accessToken"
-# accessTokenSecret = "accessTokenSecret"
-bearer_token = "AAAAAAAAAAAAAAAAAAAAAOOcgwEAAAAA1hJMtyYRRJ4YChdYhyXTkL0uldE%3DNVax1u4M5cROmdTKLpi32uHR9pUGB28QQz2FhcIXAqQSkNxHF1"
-ip_server = "51.38.185.58:9092" 
+# consumerKey = auth.consumerKey
+# consumerSecret = auth.consumerSecret
+# accessToken = auth.accessToken
+# accessTokenSecret = auth.accessTokenSecret
+bearer_token = auth.bearerToken
+ip_server = auth.bootstrap_server
 
 producer = KafkaProducer(bootstrap_servers=ip_server)
 search_term = 'ClimateCrisis'
