@@ -1,20 +1,18 @@
-from pyspark import SparkContext
 from pyspark.sql import functions as F
 from pyspark.sql.functions import explode
 from pyspark.sql.functions import split
 from pyspark.sql.types import StringType, StructType, StructField, FloatType
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import from_json, col
-from pyspark.ml.feature import RegexTokenizer
 import re
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 import findspark
 
 findspark.init()
 
-analyzer = SentimentIntensityAnalyzer()
-
 ip_server="51.38.185.58:9092"
+
+analyzer = SentimentIntensityAnalyzer()
 
 def cleanTweet(tweet: str):
     """This function cleans the tweets before 
@@ -45,6 +43,7 @@ def cleanTweet(tweet: str):
 
     return tweet
 
+
 def getPolarity(tweet):
     score = analyzer.polarity_scores(tweet)["compound"]
     return score
@@ -68,10 +67,11 @@ if __name__ == "__main__":
     df = spark \
         .readStream \
         .format("kafka") \
-        .option("kafka.bootstrap.servers", "51.38.185.58:9092")\
+        .option("kafka.bootstrap.servers", ip_server)\
         .option("subscribe", "twitter-mac") \
         .option("startingOffsets", "latest") \
         .load()
+
 
     mySchema = StructType([StructField("text", StringType(), True)])
     # Get only the "text" from the information we receive from Kafka. The text is the tweet produce by a user
@@ -86,28 +86,6 @@ if __name__ == "__main__":
 
     polarity_tweets = raw_tweets.withColumn("polarity", polarity(col("processed_text")))
     sentiment_tweets = polarity_tweets.withColumn("sentiment", sentiment(col("polarity")))
-
-    '''
-    all about tokenization
-    '''
-    # Create a tokenizer that Filter away tokens with length < 3, and get rid of symbols like $,#,...
-    tokenizer = RegexTokenizer()\
-                .setPattern("[\\W_]+")\
-                .setMinTokenLength(3)\
-                .setInputCol("processed_text")\
-                .setOutputCol("tokens")
-
-    # Tokenize tweets
-    tokenized_tweets = tokenizer\
-                       .transform(raw_tweets)
-
-    tweets_df = df1\
-                .withColumn('word', explode(split(col("text"), ' ')))\
-                .groupby('word')\
-                .count()\
-                .sort('count', ascending=False)\
-                .filter(col('word')\
-                .contains('#'))
 
     query = sentiment_tweets\
             .writeStream\
