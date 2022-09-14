@@ -4,10 +4,13 @@ from pyspark.sql.functions import explode
 from pyspark.sql.functions import split
 from pyspark.sql.types import StringType, StructType, StructField, FloatType
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import from_json, col, udf
+from pyspark.sql.functions import from_json, col
 from pyspark.ml.feature import RegexTokenizer
 import re
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+import findspark
+
+findspark.init()
 
 analyzer = SentimentIntensityAnalyzer()
 
@@ -49,7 +52,7 @@ def getPolarity(tweet):
 def getSentiment(polarityValue):
     if polarityValue <= -0.05:
         return 'Negative'
-    elif polarityValue > -0.05 & polarityValue < 0.05:
+    elif (polarityValue > -0.05) & (polarityValue < 0.05):
         return 'Neutral'
     else:
         return 'Positive'
@@ -58,7 +61,6 @@ if __name__ == "__main__":
     spark = SparkSession \
         .builder \
         .appName("TwitterSentimentAnalysis") \
-        .config("spark.jars.packages", "org.apache.spark:spark-sql-kafka-0-10_2.12:3.1.2") \
         .getOrCreate()
     
     sc = spark.sparkContext.setLogLevel("ERROR")
@@ -110,8 +112,7 @@ if __name__ == "__main__":
     query = sentiment_tweets\
             .writeStream\
             .queryName("test_tweets") \
-            .output("append")\
+            .outputMode("update")\
             .format("console")\
-            .option("truncate", False)\
             .start()\
-            .awaitTermination(60)
+            .awaitTermination()
