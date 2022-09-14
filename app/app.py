@@ -55,9 +55,15 @@ def getSentiment(polarityValue):
     else:
         return 'Positive'
 
+def write_row(batch_df , batch_id):
+    batch_df.write.format("mongo").mode("append").save()
+    pass
+
 if __name__ == "__main__":
     spark = SparkSession \
         .builder \
+        .config("spark.mongodb.input.uri", "mongodb+srv://admin:admin@cluster0.g0zvq8k.mongodb.net/sentiment_analysis.tweet_streaming?retryWrites=true&w=majority")\
+        .config("spark.mongodb.output.uri", "mongodb+srv://admin:admin@cluster0.g0zvq8k.mongodb.net/sentiment_analysis.tweet_streaming?retryWrites=true&w=majority")\
         .appName("TwitterSentimentAnalysis") \
         .getOrCreate()
     
@@ -83,10 +89,22 @@ if __name__ == "__main__":
     polarity_tweets = raw_tweets.withColumn("polarity", polarity(col("processed_text")))
     sentiment_tweets = polarity_tweets.withColumn("sentiment", sentiment(col("polarity")))
 
-    query = sentiment_tweets\
+    """query = sentiment_tweets\
             .writeStream\
             .queryName("test_tweets") \
             .outputMode("append")\
             .format("console")\
             .start()\
-            .awaitTermination()
+            .awaitTermination()"""
+    
+    """# csv file dumping
+    csv = sentiment_tweets.repartition(1)
+    query2 = csv.writeStream.queryName("final_tweets_parquet") \
+        .outputMode("append").format("csv") \
+        .option("path", "./dashboard") \
+        .option("checkpointLocation", "./check") \
+        .trigger(processingTime='60 seconds').start()
+    query2.awaitTermination()"""
+
+    # mongodb dumping
+    query = sentiment_tweets.writeStream.foreachBatch(write_row).start().awaitTermination()
