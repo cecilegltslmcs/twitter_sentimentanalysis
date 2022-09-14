@@ -9,9 +9,9 @@ consumerSecret = "consumerSecret"
 accessToken = "accessToken"
 accessTokenSecret = "accessTokenSecret"
 
-server = 
+ip_server = "51.38.185.58:9092" 
 
-producer = KafkaProducer(bootstrap_servers='localhost:9092')
+producer = KafkaProducer(bootstrap_servers=ip_server)
 search_term = 'ClimateCrisis'
 topic_name = 'twitter'
 
