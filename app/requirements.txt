@@ -2,4 +2,3 @@ tweepy
 kafka-python
 pyspark
 vaderSentiment
-json
