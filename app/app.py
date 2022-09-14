@@ -8,9 +8,17 @@ from pyspark.ml.feature import RegexTokenizer
 import re
 from textblob import TextBlob
 
+ip_server="51.38.185.58:9092"
 
-# remove_links
 def cleanTweet(tweet: str) -> str:
+    """This function cleans the tweets before 
+    performing sentiment analysis of the tweet.
+    
+    Input: tweets coming from Kafka.
+    
+    Output: tweets cleaning ready for the sentiment analysis."""
+
+    # remove links
     tweet = re.sub(r'http\S+', '', str(tweet))
     tweet = re.sub(r'bit.ly/\S+', '', str(tweet))
     tweet = tweet.strip('[link]')
@@ -19,7 +27,7 @@ def cleanTweet(tweet: str) -> str:
     tweet = re.sub('(RT\s@[A-Za-z]+[A-Za-z0-9-_]+)', '', str(tweet))
     tweet = re.sub('(@[A-Za-z]+[A-Za-z0-9-_]+)', '', str(tweet))
 
-    # remove puntuation
+    # remove punctuation
     my_punctuation = '!"$%&\'()*+,-./:;<=>?[\\]^_`{|}~•@â'
     tweet = re.sub('[' + my_punctuation + ']+', ' ', str(tweet))
 
@@ -50,33 +58,17 @@ def getSentiment(polarityValue: int) -> str:
     else:
         return 'Positive'
 
-
-# epoch
-def write_row_in_mongo(df):
-    mongoURL = "mongodb+srv://Lorena:<password>@cluster0.9psdq.mongodb.net/demo_database.demo_collection" \
-               "?retryWrites=true&w=majority "
-    df.write.format("mongo").mode("append").option("uri", mongoURL).save()
-    pass
-
-
 if __name__ == "__main__":
     spark = SparkSession \
         .builder \
         .appName("TwitterSentimentAnalysis") \
-        .config("spark.mongodb.input.uri",
-                "mongodb+srv://<Username>:<Password>@cluster0.9psdq.mongodb.net/<database_name>.<database_collection>"
-                "?retryWrites=true&w=majority") \
-        .config("spark.mongodb.output.uri",
-                "mongodb+srv://<Username>:<Password>@cluster0.9psdq.mongodb.net/<database_name>.<database_collection>"
-                "?retryWrites=true&w=majority") \
-        .config("spark.jars.packages", "org.mongodb.spark:mongo-spark-connector_2.12:3.0.1") \
         .config("spark.jars.packages", "org.apache.spark:spark-sql-kafka-0-10_2.12:3.1.2") \
         .getOrCreate()
 
     df = spark \
         .readStream \
         .format("kafka") \
-        .option("kafka.bootstrap.servers", "localhost:9092") \
+        .option("kafka.bootstrap.servers", ip_server) \
         .option("subscribe", "twitter") \
         .load()
 
@@ -112,6 +104,11 @@ if __name__ == "__main__":
                                                                                                       ascending=False).filter(
         col('word').contains('#'))
 
-    query = sentiment_tweets.writeStream.queryName("test_tweets") \
-        .foreachBatch(write_row_in_mongo).start()
-    query.awaitTermination()
+    query = sentiment_tweets\
+            .writeStream\
+            .queryName("test_tweets") \
+            .output("append")\
+            .format("console")\
+            .option("truncate", False)\
+            .start()\
+            .awaitTermination(60)
