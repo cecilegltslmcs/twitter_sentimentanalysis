@@ -46,9 +46,9 @@ def getPolarity(tweet):
     return score
 
 def getSentiment(polarityValue):
-    if polarityValue < 0:
+    if polarityValue <= -0.05:
         return 'Negative'
-    elif polarityValue == 0:
+    elif polarityValue > -0.05 & polarityValue < 0.05:
         return 'Neutral'
     else:
         return 'Positive'
