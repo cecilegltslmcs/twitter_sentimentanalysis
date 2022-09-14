@@ -1,3 +1,4 @@
+from pyspark import SparkContext
 from pyspark.sql import functions as F
 from pyspark.sql.functions import explode
 from pyspark.sql.functions import split
@@ -12,7 +13,7 @@ analyzer = SentimentIntensityAnalyzer()
 
 ip_server="51.38.185.58:9092"
 
-def cleanTweet(tweet: str) -> str:
+def cleanTweet(tweet: str):
     """This function cleans the tweets before 
     performing sentiment analysis of the tweet.
     
@@ -59,12 +60,15 @@ if __name__ == "__main__":
         .appName("TwitterSentimentAnalysis") \
         .config("spark.jars.packages", "org.apache.spark:spark-sql-kafka-0-10_2.12:3.1.2") \
         .getOrCreate()
+    
+    sc = spark.sparkContext.setLogLevel("ERROR")
 
     df = spark \
         .readStream \
         .format("kafka") \
-        .option("kafka.bootstrap.servers", ip_server) \
-        .option("subscribe", "twitter") \
+        .option("kafka.bootstrap.servers", "51.38.185.58:9092")\
+        .option("subscribe", "twitter-mac") \
+        .option("startingOffsets", "latest") \
         .load()
 
     mySchema = StructType([StructField("text", StringType(), True)])
@@ -74,7 +78,6 @@ if __name__ == "__main__":
     df1 = values.select("tweet.*")
     clean_tweets = F.udf(cleanTweet, StringType())
     raw_tweets = df1.withColumn('processed_text', clean_tweets(col("text")))
-    # udf_stripDQ = udf(stripDQ, StringType())
 
     polarity = F.udf(getPolarity, FloatType())
     sentiment = F.udf(getSentiment, StringType())

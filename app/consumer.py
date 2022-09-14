@@ -1,7 +1,7 @@
 from kafka import KafkaConsumer
 import json
 
-topic_name = 'twitter'
+topic_name = 'twitter-mac'
 ip_server = "51.38.185.58:9092"
 
 

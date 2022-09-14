@@ -13,7 +13,7 @@ ip_server = "51.38.185.58:9092"
 
 producer = KafkaProducer(bootstrap_servers=ip_server)
 search_term = 'ClimateCrisis'
-topic_name = 'twitter'
+topic_name = 'twitter-mac'
 
 client = tweepy.Client(bearer_token=bearer_token)
 
