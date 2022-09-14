@@ -69,13 +69,13 @@ if __name__ == "__main__":
         .format("kafka") \
         .option("kafka.bootstrap.servers", ip_server)\
         .option("subscribe", "twitter-mac") \
-        .option("startingOffsets", "latest") \
         .load()
 
-
+    df.printSchema()
     mySchema = StructType([StructField("text", StringType(), True)])
     # Get only the "text" from the information we receive from Kafka. The text is the tweet produce by a user
     values = df.select(from_json(df.value.cast("string"), mySchema).alias("tweet"))
+    values.printSchema()
 
     df1 = values.select("tweet.*")
     clean_tweets = F.udf(cleanTweet, StringType())
@@ -87,7 +87,7 @@ if __name__ == "__main__":
     polarity_tweets = raw_tweets.withColumn("polarity", polarity(col("processed_text")))
     sentiment_tweets = polarity_tweets.withColumn("sentiment", sentiment(col("polarity")))
 
-    query = sentiment_tweets\
+    query = values\
             .writeStream\
             .queryName("test_tweets") \
             .outputMode("update")\
