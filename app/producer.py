@@ -8,7 +8,7 @@ import logging
 # consumerSecret = "consumerSecret"
 # accessToken = "accessToken"
 # accessTokenSecret = "accessTokenSecret"
-bearer_token = "AAAAAAAAAAAAAAAAAAAAADFpgwEAAAAApY9f2nrgrD1MzpC6G4ln7Oo5HCo%3DzI0bRiULFsBubjn6MX5fyLb4FbFDdQQQz6gS5yRI9NeDPPQvFM"
+bearer_token = "AAAAAAAAAAAAAAAAAAAAAOOcgwEAAAAA1hJMtyYRRJ4YChdYhyXTkL0uldE%3DNVax1u4M5cROmdTKLpi32uHR9pUGB28QQz2FhcIXAqQSkNxHF1"
 ip_server = "51.38.185.58:9092" 
 
 producer = KafkaProducer(bootstrap_servers=ip_server)
