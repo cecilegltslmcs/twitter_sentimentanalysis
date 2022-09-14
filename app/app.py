@@ -6,7 +6,9 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import from_json, col, udf
 from pyspark.ml.feature import RegexTokenizer
 import re
-from textblob import TextBlob
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+
+analyzer = SentimentIntensityAnalyzer()
 
 ip_server="51.38.185.58:9092"
 
@@ -39,8 +41,10 @@ def cleanTweet(tweet: str) -> str:
 
     return tweet
 
+# TODO:
+    # - Remplacer textBlob par Vader
 
-# Create a function to get the subjectifvity
+"""# Create a function to get the subjectifvity
 def getSubjectivity(tweet: str) -> float:
     return TextBlob(tweet).sentiment.subjectivity
 
@@ -56,7 +60,7 @@ def getSentiment(polarityValue: int) -> str:
     elif polarityValue == 0:
         return 'Neutral'
     else:
-        return 'Positive'
+        return 'Positive'"""
 
 if __name__ == "__main__":
     spark = SparkSession \

@@ -1,4 +1,4 @@
 tweepy
 kafka-python
 pyspark
-textBlob
+vaderSentiment
