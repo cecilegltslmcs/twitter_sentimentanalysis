@@ -1,6 +1,4 @@
 from pyspark.sql import functions as F
-from pyspark.sql.functions import explode
-from pyspark.sql.functions import split
 from pyspark.sql.types import StringType, StructType, StructField, FloatType
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import from_json, col
@@ -71,14 +69,14 @@ if __name__ == "__main__":
         .option("subscribe", "twitter-mac") \
         .load()\
         .selectExpr("CAST(value AS STRING)")
-
+        
     df.printSchema()
-    mySchema = StructType([StructField("text", StringType(), True)])
+    # mySchema = StructType([StructField("text", StringType(), True)])
     # Get only the "text" from the information we receive from Kafka. The text is the tweet produce by a user
-    values = df.select(from_json(df.value.cast("string"), mySchema).alias("tweet"))
-    values.printSchema()
+    #values = df.select(col("key").cast("string"), from_json(col("value").cast("string"), df.schema).alias("tweet"))
+    #values.printSchema()
 
-    df1 = values.select("tweet.*")
+    """df1 = df.select("value.*")
     clean_tweets = F.udf(cleanTweet, StringType())
     raw_tweets = df1.withColumn('processed_text', clean_tweets(col("text")))
 
@@ -86,12 +84,12 @@ if __name__ == "__main__":
     sentiment = F.udf(getSentiment, StringType())
 
     polarity_tweets = raw_tweets.withColumn("polarity", polarity(col("processed_text")))
-    sentiment_tweets = polarity_tweets.withColumn("sentiment", sentiment(col("polarity")))
+    sentiment_tweets = polarity_tweets.withColumn("sentiment", sentiment(col("polarity")))"""
 
     query = df\
             .writeStream\
             .queryName("test_tweets") \
-            .outputMode("update")\
+            .outputMode("append")\
             .format("console")\
             .start()\
             .awaitTermination()
