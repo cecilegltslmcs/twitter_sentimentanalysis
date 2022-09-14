@@ -69,7 +69,8 @@ if __name__ == "__main__":
         .format("kafka") \
         .option("kafka.bootstrap.servers", ip_server)\
         .option("subscribe", "twitter-mac") \
-        .load()
+        .load()\
+        .selectExpr("CAST(value AS STRING)")
 
     df.printSchema()
     mySchema = StructType([StructField("text", StringType(), True)])
@@ -87,7 +88,7 @@ if __name__ == "__main__":
     polarity_tweets = raw_tweets.withColumn("polarity", polarity(col("processed_text")))
     sentiment_tweets = polarity_tweets.withColumn("sentiment", sentiment(col("polarity")))
 
-    query = values\
+    query = df\
             .writeStream\
             .queryName("test_tweets") \
             .outputMode("update")\
