@@ -1,6 +1,7 @@
 import tweepy
 from kafka import KafkaProducer
 import logging
+import json
 
 """API ACCESS KEYS"""
 
@@ -15,7 +16,8 @@ producer = KafkaProducer(bootstrap_servers=ip_server)
 search_term = 'ClimateCrisis'
 topic_name = 'twitter-mac'
 
-client = tweepy.Client(bearer_token=bearer_token)
+client = tweepy.Client(bearer_token=bearer_token,
+                      return_type=json)
 
 def twitterAuth():
     # create the authentication object
@@ -25,7 +27,6 @@ def twitterAuth():
     # create the API object
     api = tweepy.API(authenticate, wait_on_rate_limit=True)
     return api
-
 
 class TweetListener(tweepy.StreamingClient):
 
@@ -48,5 +49,4 @@ class TweetListener(tweepy.StreamingClient):
 if __name__ == '__main__':
     #init twitter_stream class
     twitter_stream = TweetListener(bearer_token)
-        
     twitter_stream.start_streaming_tweets(search_term)
