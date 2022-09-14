@@ -41,26 +41,17 @@ def cleanTweet(tweet: str) -> str:
 
     return tweet
 
-# TODO:
-    # - Remplacer textBlob par Vader
+def getPolarity(tweet):
+    score = analyzer.polarity_scores(tweet)["compound"]
+    return score
 
-"""# Create a function to get the subjectifvity
-def getSubjectivity(tweet: str) -> float:
-    return TextBlob(tweet).sentiment.subjectivity
-
-
-# Create a function to get the polarity
-def getPolarity(tweet: str) -> float:
-    return TextBlob(tweet).sentiment.polarity
-
-
-def getSentiment(polarityValue: int) -> str:
+def getSentiment(polarityValue):
     if polarityValue < 0:
         return 'Negative'
     elif polarityValue == 0:
         return 'Neutral'
     else:
-        return 'Positive'"""
+        return 'Positive'
 
 if __name__ == "__main__":
     spark = SparkSession \
@@ -85,28 +76,33 @@ if __name__ == "__main__":
     raw_tweets = df1.withColumn('processed_text', clean_tweets(col("text")))
     # udf_stripDQ = udf(stripDQ, StringType())
 
-    subjectivity = F.udf(getSubjectivity, FloatType())
     polarity = F.udf(getPolarity, FloatType())
     sentiment = F.udf(getSentiment, StringType())
 
-    subjectivity_tweets = raw_tweets.withColumn('subjectivity', subjectivity(col("processed_text")))
-    polarity_tweets = subjectivity_tweets.withColumn("polarity", polarity(col("processed_text")))
+    polarity_tweets = raw_tweets.withColumn("polarity", polarity(col("processed_text")))
     sentiment_tweets = polarity_tweets.withColumn("sentiment", sentiment(col("polarity")))
 
     '''
     all about tokenization
     '''
     # Create a tokenizer that Filter away tokens with length < 3, and get rid of symbols like $,#,...
-    tokenizer = RegexTokenizer().setPattern("[\\W_]+").setMinTokenLength(3).setInputCol("processed_text").setOutputCol(
-        "tokens")
+    tokenizer = RegexTokenizer()\
+                .setPattern("[\\W_]+")\
+                .setMinTokenLength(3)\
+                .setInputCol("processed_text")\
+                .setOutputCol("tokens")
 
     # Tokenize tweets
-    tokenized_tweets = tokenizer.transform(raw_tweets)
+    tokenized_tweets = tokenizer\
+                       .transform(raw_tweets)
 
-    # en sortie on a
-    tweets_df = df1.withColumn('word', explode(split(col("text"), ' '))).groupby('word').count().sort('count',
-                                                                                                      ascending=False).filter(
-        col('word').contains('#'))
+    tweets_df = df1\
+                .withColumn('word', explode(split(col("text"), ' ')))\
+                .groupby('word')\
+                .count()\
+                .sort('count', ascending=False)\
+                .filter(col('word')\
+                .contains('#'))
 
     query = sentiment_tweets\
             .writeStream\
