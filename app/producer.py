@@ -1,7 +1,6 @@
 import tweepy
 from kafka import KafkaProducer
 import logging
-import json
 
 """API ACCESS KEYS"""
 
@@ -17,7 +16,7 @@ search_term = 'ClimateCrisis'
 topic_name = 'twitter-mac'
 
 client = tweepy.Client(bearer_token=bearer_token,
-                      return_type=json)
+                       return_type=dict)
 
 def twitterAuth():
     # create the authentication object
