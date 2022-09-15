@@ -12,9 +12,10 @@ try:
 except:  
    print("Could not connect to MongoDB")
     
-
 topic_name = 'twitter-mac'
 ip_server = auth.bootstrap_server
+#ip_server = "51.38.185.58:9092" 
+
 
 consumer = KafkaConsumer(
     topic_name,
@@ -33,18 +34,18 @@ data_sender = []
 nb_upload = 10
 k=0
 for msg in consumer:
-    record = json.loads(json.dumps(msg.value))
-    print(record)
-    data = record['data']
+   record = json.loads(json.dumps(msg.value))
+   print(record)
+   data = record['data']
 
-    data_sender.append(record['data'])
-    k += 1
-    if k >= nb_upload:
-      # Ingest data into MongoDB
+   data_sender.append(record['data'])
+   k += 1
+   if k >= nb_upload:
+   # Ingest data into MongoDB
       try:
          collection.insert_many(data_sender)
          print("Data inserted into MongoDB")
       except:
-          print("Could not insert into MongoDB")
-      k=0
-      data_sender = []
+         print("Could not insert into MongoDB") 
+   k=0
+   data_sender = []
