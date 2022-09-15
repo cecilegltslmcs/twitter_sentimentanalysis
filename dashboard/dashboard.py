@@ -18,7 +18,7 @@ try:
     print('Connection OK')
 except:
     print('Connection error')
-    
+
 # Pull data from the collection.
 # Uses st.experimental_memo to only rerun when the query changes or after 10 min.
 @st.experimental_memo(ttl=600)
@@ -33,12 +33,18 @@ items = get_data()
 st.title("Twitter sentiment analysis using the keyword 'ClimateCrisis'")
 
 st.sidebar.title("Chart type and data")
-option = st.sidebar.selectbox("Choose your analysis.", ('Pie Chart', 'Distribution Chart', 'Boxplot', 'Table'))
+option = st.sidebar.selectbox("Choose your analysis.", ('Home','Pie Chart', 'Distribution Chart', 'Boxplot', 'Table'))
 
 
 df = pd.DataFrame(items)
 df.drop("processed_text", axis=1, inplace=True)
 df = df.astype({'_id':str ,'text':str, 'polarity':float, 'sentiment':str})
+
+if option == "Home":
+    st.image("/home/cecile/Documents/Formation_DataEng/twitter_sentimentanalysis/dashboard/img/Twitter-logo.png")
+    st.header("Welcome to the dashboard about tweets sentiments related to climate crisis. In order to choose your analysis, select an option on the sidebar")
+    st.image("/home/cecile/Documents/Formation_DataEng/twitter_sentimentanalysis/dashboard/img/pxclimateaction-g25a4b047f_1920.jpg")
+    st.write("Réalisé par Aurélien Blanc, Cécile Guillot & Matthieu Cavaillon")
 
 if option == 'Pie Chart':
     st.subheader("Distribution of the different sentiment in the tweets")
@@ -56,13 +62,22 @@ if option =="Distribution Chart":
     st.subheader("Number of tweets by polarity")
     fig2 = px.histogram(df,
                         x="polarity",
+                        opacity=0.7,
                         log_y=True)
     st.plotly_chart(fig2)
 
 if option =="Boxplot":
+    y_neutral = df.loc[df["sentiment"] == "Neutral"]
+    y_positive = df.loc[df["sentiment"] == "Positive"]
+    y_negative = df.loc[df["sentiment"] == "Negative"]
+    fig3 = go.Figure()
+    fig3.add_trace(go.Box(y=y_negative.polarity, name='Negative',
+                   marker_color = 'red'))
+    fig3.add_trace(go.Box(y=y_neutral.polarity, name = 'Neutral',
+                   marker_color = 'darkorange'))
+    fig3.add_trace(go.Box(y=y_positive.polarity, name = 'Positive',
+                   marker_color = 'lightgreen'))
     st.subheader("Visualisation of the statistics for each sentiment")
-    fig3 = px.box(df, x="sentiment",
-                      y="polarity")
     st.plotly_chart(fig3)
 
 if option == "Table":
