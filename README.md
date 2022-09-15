@@ -21,4 +21,4 @@ Une fois les tweet néttoyés et analysés par notre algoryhtme, les information
 ***
 ## Schéma de l'architecture
 
-![ALT](/https://gitlab.com/cecilegltslmcs/twitter_sentimentanalysis/-/blob/main/Pipeline.drawio1.png)
+![ALT](https://gitlab.com/cecilegltslmcs/twitter_sentimentanalysis/-/blob/main/Pipeline.drawio1.png)
