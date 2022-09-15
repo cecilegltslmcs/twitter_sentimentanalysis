@@ -9,12 +9,12 @@ try:
    db = cluster['sentiment_analysis']
    collection = db["raw_tweet"]
    print("Connected successfully!")
-except:  
+except:
    print("Could not connect to MongoDB")
     
 topic_name = 'twitter-mac'
 ip_server = auth.bootstrap_server
-#ip_server = "51.38.185.58:9092" 
+# ip_server = "51.38.185.58:9092" 
 
 
 consumer = KafkaConsumer(

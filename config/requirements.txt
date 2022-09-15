@@ -4,3 +4,4 @@ pyspark
 vaderSentiment
 pymongo
 streamlit
+plotly==5.10.0
