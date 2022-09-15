@@ -30,23 +30,23 @@ def get_data():
 
 items = get_data()
 
-st.title('Twitter sentiment analysis')
-
-st.markdown('''Twitter sentiment analysis using the keyword ClimateCrisis''')
-
+st.title("Twitter sentiment analysis using the keyword 'ClimateCrisis'")
 
 st.sidebar.title("Chart type and data")
-option = st.sidebar.selectbox("which Dashboard?", ('Pie Chart', 'Distribution Chart', 'Table'))
+option = st.sidebar.selectbox("Choose your analysis.", ('Pie Chart', 'Distribution Chart', 'Table'))
 
 
 df = pd.DataFrame(items)
-df = df.astype({'_id':str,'text':str, 'processed_text':str,'polarity':float, 'sentiment':str })
+df.drop("processed_text", axis=1, inplace=True)
+df = df.astype({'_id':str ,'text':str, 'polarity':float, 'sentiment':str})
 #display data
 
 if option == "Table":
-    st.write(df.head())
+    st.subheader('Visualise the tweets, the polarity compound and the sentiment')
+    st.dataframe(df)
 
 if option == 'Pie Chart':
+    st.subheader("Distribution of the different sentiment in the tweets")
     sentiment_count = df.groupby(['sentiment']).agg(nb_sentiment=pd.NamedAgg(column="sentiment", aggfunc="count")).reset_index()
 
     #plotly
