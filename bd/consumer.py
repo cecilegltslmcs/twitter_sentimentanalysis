@@ -5,7 +5,7 @@ import auth_token as auth
 
 # Connect to MongoDB and database
 try:
-   cluster = pymongo.MongoClient("mongodb+srv://admin:admin@cluster0.g0zvq8k.mongodb.net/?retryWrites=true&w=majority")
+   cluster = MongoClient("mongodb+srv://admin:admin@cluster0.g0zvq8k.mongodb.net/?retryWrites=true&w=majority")
    db = cluster['sentiment_analysis']
    collection = db["raw_tweet"]
    print("Connected successfully!")
@@ -37,9 +37,9 @@ for msg in consumer:
     print(record)
     data = record['data']
 
-   data_sender.append(record['data'])
-   k += 1
-   if k >= nb_upload:
+    data_sender.append(record['data'])
+    k += 1
+    if k >= nb_upload:
       # Ingest data into MongoDB
       try:
          collection.insert_many(data_sender)
