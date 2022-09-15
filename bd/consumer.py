@@ -20,18 +20,13 @@ ip_server = auth.bootstrap_server
 consumer = KafkaConsumer(
      topic_name,
      bootstrap_servers=[ip_server],
-     auto_offset_reset='latest',
-     enable_auto_commit=True,
-     auto_commit_interval_ms=5000,
-     fetch_max_bytes=128,
-     max_poll_records=100,
      value_deserializer=lambda x: json.loads(x.decode('utf-8')))
 
 
 # Parse received data from Kafka
 data_sender = []
 #Wait to have nb_upload tweets before updating the DB to limit the nb of connections
-nb_upload = 10
+nb_upload = 3
 k=0
 for msg in consumer:
    record = json.loads(json.dumps(msg.value))
