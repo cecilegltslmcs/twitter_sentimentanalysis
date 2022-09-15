@@ -5,7 +5,11 @@ import auth_token as auth
 
 # Connect to MongoDB and database
 try:
+<<<<<<< HEAD
    cluster = pymongo.MongoClient("mongodb+srv://auth.mongo_user:auth.mongo_password@cluster0.g0zvq8k.mongodb.net/?retryWrites=true&w=majority")
+=======
+   cluster = pymongo.MongoClient("mongodb+srv://admin:admin@cluster0.g0zvq8k.mongodb.net/?retryWrites=true&w=majority")
+>>>>>>> f68b96b7ef0f2a431cf35c54ce3d4b09693056c4
    db = cluster['sentiment_analysis']
    collection = db["raw_tweet"]
    print("Connected successfully!")
@@ -47,4 +51,9 @@ for msg in consumer:
       except:
           print("Could not insert into MongoDB")
       k=0
+<<<<<<< HEAD
       data_sender = []
+=======
+      data_sender = []
+
+>>>>>>> f68b96b7ef0f2a431cf35c54ce3d4b09693056c4

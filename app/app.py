@@ -6,7 +6,6 @@ from pyspark.sql.functions import from_json, col
 import re
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 import findspark
-import auth_token as auth
 
 findspark.init()
 
