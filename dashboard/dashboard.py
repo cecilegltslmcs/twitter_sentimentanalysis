@@ -41,9 +41,9 @@ df.drop("processed_text", axis=1, inplace=True)
 df = df.astype({'_id':str ,'text':str, 'polarity':float, 'sentiment':str})
 
 if option == "Home":
-    st.image("/home/cecile/Documents/Formation_DataEng/twitter_sentimentanalysis/dashboard/img/Twitter-logo.png")
-    st.header("Welcome to the dashboard about tweets sentiments related to climate crisis. In order to choose your analysis, select an option on the sidebar")
-    st.image("/home/cecile/Documents/Formation_DataEng/twitter_sentimentanalysis/dashboard/img/pxclimateaction-g25a4b047f_1920.jpg")
+    st.image("./img/Twitter-logo.png")
+    st.header("Welcome to the dashboard about tweets sentiments related to climate crisis. In order to choose your analysis, select an option on the sidebar.")
+    st.image("./img/pxclimateaction-g25a4b047f_1920.jpg")
     st.write("Réalisé par Aurélien Blanc, Cécile Guillot & Matthieu Cavaillon")
 
 if option == 'Pie Chart':
