@@ -33,35 +33,38 @@ items = get_data()
 st.title("Twitter sentiment analysis using the keyword 'ClimateCrisis'")
 
 st.sidebar.title("Chart type and data")
-option = st.sidebar.selectbox("Choose your analysis.", ('Pie Chart', 'Distribution Chart', 'Table'))
+option = st.sidebar.selectbox("Choose your analysis.", ('Pie Chart', 'Distribution Chart', 'Boxplot', 'Table'))
 
 
 df = pd.DataFrame(items)
 df.drop("processed_text", axis=1, inplace=True)
 df = df.astype({'_id':str ,'text':str, 'polarity':float, 'sentiment':str})
-#display data
-
-if option == "Table":
-    st.subheader('Visualise the tweets, the polarity compound and the sentiment')
-    st.dataframe(df)
 
 if option == 'Pie Chart':
     st.subheader("Distribution of the different sentiment in the tweets")
     sentiment_count = df.groupby(['sentiment']).agg(nb_sentiment=pd.NamedAgg(column="sentiment", aggfunc="count")).reset_index()
 
-    #plotly
-    #Pie chart of the sentiment count
     colors = ['red', 'darkorange', 'lightgreen']
     fig = go.Figure(data=[go.Pie(
                              labels=sentiment_count.sentiment,
                              values=sentiment_count.nb_sentiment)])
-    fig.update_traces(hoverinfo='value', textinfo='label+percent', textfont_size=20,
-                  marker=dict(colors=colors))
+    fig.update_traces(hoverinfo='value', textinfo='label+percent', textfont_size=15,
+                      marker=dict(colors=colors))
     st.plotly_chart(fig)
 
-if option =='Distribution Chart':
-    #distribution chart
-    distribution_df = df[['polarity']].sort_values(by='polarity')
-    #st.write(distribution_df)
-    fig2 = px.scatter(distribution_df,x=df.index, y='polarity')
+if option =="Distribution Chart":
+    st.subheader("Number of tweets by polarity")
+    fig2 = px.histogram(df,
+                        x="polarity",
+                        log_y=True)
     st.plotly_chart(fig2)
+
+if option =="Boxplot":
+    st.subheader("Visualisation of the statistics for each sentiment")
+    fig3 = px.box(df, x="sentiment",
+                      y="polarity")
+    st.plotly_chart(fig3)
+
+if option == "Table":
+    st.subheader('Visualize the tweets, the polarity compound and the sentiment')
+    st.dataframe(df)
