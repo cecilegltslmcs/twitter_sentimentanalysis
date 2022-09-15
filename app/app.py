@@ -9,7 +9,8 @@ import findspark
 
 findspark.init()
 
-ip_server=auth.bootstrap_server
+ip_server = auth.bootstrap_server
+topic_name = "twitter-mac"
 
 analyzer = SentimentIntensityAnalyzer()
 
@@ -31,8 +32,8 @@ def cleanTweet(tweet: str):
     tweet = re.sub('(@[A-Za-z]+[A-Za-z0-9-_]+)', '', str(tweet))
 
     # remove punctuation
-    my_punctuation = '!"$%&\'()*+,-./:;<=>?[\\]^_`{|}~•@â'
-    tweet = re.sub('[' + my_punctuation + ']+', ' ', str(tweet))
+    my_punctuation = '"$%&\'()*+,-./:;<=>?[\\]^_`{|}~•@â'
+    tweet = re.sub('[' + my_punctuation + ']+', '', str(tweet))
 
     # remove number
     tweet = re.sub('([0-9]+)', '', str(tweet))
@@ -56,26 +57,31 @@ def getSentiment(polarityValue):
         return 'Positive'
 
 def write_row(batch_df , batch_id):
-    batch_df.write.format("mongo").mode("append").save()
+    batch_df\
+        .write\
+        .format("mongo")\
+        .mode("append")\
+        .save()
     pass
 
 if __name__ == "__main__":
     spark = SparkSession \
         .builder \
-        .config("spark.mongodb.input.uri", "mongodb+srv://admin:admin@cluster0.g0zvq8k.mongodb.net/sentiment_analysis.tweet_streaming?retryWrites=true&w=majority")\
-        .config("spark.mongodb.output.uri", "mongodb+srv://admin:admin@cluster0.g0zvq8k.mongodb.net/sentiment_analysis.tweet_streaming?retryWrites=true&w=majority")\
+        .config("spark.mongodb.input.uri", auth.uri_mongo)\
+        .config("spark.mongodb.output.uri", auth.uri_mongo)\
         .appName("TwitterSentimentAnalysis") \
         .getOrCreate()
     
     sc = spark.sparkContext.setLogLevel("ERROR")
 
-    raw_json = spark.read.json("tweet.json", multiLine=True)
+    raw_json = spark.read.json("tweet.json",\
+                                multiLine=True)
 
     df = spark \
         .readStream \
         .format("kafka") \
         .option("kafka.bootstrap.servers", ip_server)\
-        .option("subscribe", "twitter-mac") \
+        .option("subscribe", topic_name) \
         .load()\
         .withColumn("value", from_json(col("value").cast("string"), raw_json.schema))\
         .select(col('value.data.text'))
@@ -89,7 +95,8 @@ if __name__ == "__main__":
     polarity_tweets = raw_tweets.withColumn("polarity", polarity(col("processed_text")))
     sentiment_tweets = polarity_tweets.withColumn("sentiment", sentiment(col("polarity")))
 
-    """query = sentiment_tweets\
+    """ # console display (debug mode)
+    query = sentiment_tweets\
             .writeStream\
             .queryName("test_tweets") \
             .outputMode("append")\
@@ -97,14 +104,17 @@ if __name__ == "__main__":
             .start()\
             .awaitTermination()"""
     
-    """# csv file dumping
-    csv = sentiment_tweets.repartition(1)
-    query2 = csv.writeStream.queryName("final_tweets_parquet") \
-        .outputMode("append").format("csv") \
-        .option("path", "./dashboard") \
+    """# parquet file dumping
+    parquet = sentiment_tweets.repartition(1)
+    query2 = parquet \
+        .writeStream \
+        .queryName("final_tweets_parquet") \
+        .outputMode("append").format("parquet") \
+        .option("path", "./parquet_save") \
         .option("checkpointLocation", "./check") \
-        .trigger(processingTime='60 seconds').start()
-    query2.awaitTermination()"""
+        .trigger(processingTime='60 seconds')\
+        .start()\
+        .awaitTermination()"""
 
     # mongodb dumping
     query = sentiment_tweets\
