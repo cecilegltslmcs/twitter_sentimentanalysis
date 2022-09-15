@@ -6,6 +6,7 @@ from pyspark.sql.functions import from_json, col
 import re
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 import findspark
+import auth_token as auth
 
 findspark.init()
 
@@ -62,8 +63,8 @@ def write_row(batch_df , batch_id):
 if __name__ == "__main__":
     spark = SparkSession \
         .builder \
-        .config("spark.mongodb.input.uri", "mongodb+srv://admin:admin@cluster0.g0zvq8k.mongodb.net/sentiment_analysis.tweet_streaming?retryWrites=true&w=majority")\
-        .config("spark.mongodb.output.uri", "mongodb+srv://admin:admin@cluster0.g0zvq8k.mongodb.net/sentiment_analysis.tweet_streaming?retryWrites=true&w=majority")\
+        .config("spark.mongodb.input.uri", "mongodb+srv://auth.mongo_user:auth.mongo_password@cluster0.g0zvq8k.mongodb.net/sentiment_analysis.tweet_streaming?retryWrites=true&w=majority")\
+        .config("spark.mongodb.output.uri", "mongodb+srv://auth.mongo_user:auth.mongo_pasword@cluster0.g0zvq8k.mongodb.net/sentiment_analysis.tweet_streaming?retryWrites=true&w=majority")\
         .appName("TwitterSentimentAnalysis") \
         .getOrCreate()
     
@@ -107,4 +108,8 @@ if __name__ == "__main__":
     query2.awaitTermination()"""
 
     # mongodb dumping
-    query = sentiment_tweets.writeStream.foreachBatch(write_row).start().awaitTermination()
+    query = sentiment_tweets\
+            .writeStream\
+            .foreachBatch(write_row)\
+            .start()\
+            .awaitTermination()
