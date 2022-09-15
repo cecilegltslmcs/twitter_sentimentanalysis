@@ -32,7 +32,7 @@ def get_data():
 
 st.title("Twitter sentiment analysis using the keyword 'ClimateCrisis'")
 st.sidebar.title("Chart type and data")
-option = st.sidebar.selectbox("Choose your analysis.", ('Home','Pie Chart', 'Distribution Chart', 'Boxplot', 'Table'))
+option = st.sidebar.selectbox("Choose your analysis.", ('Home', 'Data', 'Pie Chart', 'Distribution Chart', 'Boxplot'))
 
 if option == "Home":
     col1, col2, col3 = st.columns(3)
@@ -42,7 +42,7 @@ if option == "Home":
         st.image("Twitter-logo.png", width=150)
     with col3:
         st.write(' ')
-    st.subheader("Welcome to the dashboard about tweets sentiments related to climate crisis. In order to choose your analysis, select an option on the sidebar.")
+    st.header("Welcome to the dashboard about tweets sentiments related to climate crisis. In order to choose your analysis, select an option on the sidebar.")
     st.image("pxclimateaction-g25a4b047f_1920.jpg")
     st.write("Réalisé par Aurélien Blanc, Cécile Guillot & Matthieu Cavaillon")
 
@@ -56,6 +56,12 @@ while True:
         df = pd.DataFrame(items)
         df.drop("processed_text", axis=1, inplace=True)
         df = df.astype({'_id':str ,'text':str, 'polarity':float, 'sentiment':str})
+
+        if option == "Data":
+            counts = len(df.index)
+            st.subheader('Visualisation of the data coming from the database and the number of tweets')
+            st.write("Number of tweets:", counts)
+            st.dataframe(df)
 
         if option == 'Pie Chart':
             st.subheader("Distribution of the different sentiment in the tweets")
@@ -81,11 +87,5 @@ while True:
             fig3.add_trace(go.Box(y=y_positive.polarity, name = 'Positive', marker_color = 'lightgreen'))
             st.subheader("Visualisation of the statistics for each sentiment")
             st.plotly_chart(fig3)
-
-        if option == "Table":
-            counts = len(df.index)
-            st.subheader('Visualize the tweets, the polarity compound and the sentiments.')
-            st.write("Nombre de tweets:", counts)
-            st.dataframe(df)
         
         time.sleep(1)
