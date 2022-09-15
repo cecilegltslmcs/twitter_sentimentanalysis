@@ -1,22 +1,22 @@
 ### create a streamlit dashboard
-
 import pymongo
 import streamlit as st
 import plotly.express as px
 import pandas as pd
+import auth_token as auth
 
 #connection to the cluster
 # Connect to MongoDB and database
 
 @st.experimental_singleton
 def init_connection():
-    return pymongo.MongoClient("mongodb+srv://admin:admin@cluster0.g0zvq8k.mongodb.net/?retryWrites=true&w=majority")
+    return pymongo.MongoClient(auth.uri_mongo_2)
 
 try:
     cluster = init_connection()
     print('Connection OK')
 except:
-    print('Connextion error')
+    print('Connection error')
     
 # Pull data from the collection.
 # Uses st.experimental_memo to only rerun when the query changes or after 10 min.
@@ -53,7 +53,7 @@ if option == 'Pie Chart':
     fig1 = px.pie(sentiment_count, names='sentiment', values='nb_sentiment')
                 #color='sentiment')
     fig1.update_layout(showlegend=True,
-                    title="Barchart des sentiments",
+                    title="Piechart des sentiments",
                     title_x=0.5,
                     #xaxis_title='nb_sentiment',
                     #yaxis_title='sentiment'
