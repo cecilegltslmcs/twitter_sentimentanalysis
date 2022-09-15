@@ -9,8 +9,9 @@ Ce projet à pour objectif la mise en place d'une application qui permet la réc
 - vaderSentiment
 - Streamlit
 ***
-### Choix de l'architecture
-Pour ce projet nous avons choisi d'utiliser une architecture lambda. Ce choix permet de traiter les tweets en temps réel tout en gardant une trace des tweets originaux dans une autre collection de notre base de donnée.
+## Choix de l'architecture
+Pour ce projet nous avons choisi d'utiliser une architecture kappa. Ce choix permet de traiter les tweets en temps réel tout en gardant une trace des tweets originaux dans une autre collection de notre base de donnée.
+
 Les tweets sont tout d'abors récupérés via l'api puis distribués à la base de donnée et à l'algorithhme de machine-learning via le consumer kafka.
 On obtient ainsi une seule application spark qui s'occupe de la partie machine learning. On évite ainsi la présence d'une deuxième application spark chargée uniquement de diriger les tweets vers notre base de donnée. Ainsi notre application gagne en rapidité.
 
