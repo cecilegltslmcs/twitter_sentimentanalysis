@@ -50,14 +50,14 @@ if option == 'Pie Chart':
 
     #plotly
     #Pie chart of the sentiment count
-    fig1 = px.pie(sentiment_count, names='sentiment', values='nb_sentiment')
-                #color='sentiment')
-    fig1.update_layout(showlegend=True,
+    fig1 = px.pie(sentiment_count, names='sentiment', values='nb_sentiment', color=['green', 'red', 'yellow'])
+    fig1.update_layout(showlegend=False,
                     title="Piechart des sentiments",
                     title_x=0.5,
                     #xaxis_title='nb_sentiment',
                     #yaxis_title='sentiment'
                     )
+    fig1.update_traces(textinfo='percent+label')
     st.plotly_chart(fig1)
 
 if option =='Distribution Chart':
