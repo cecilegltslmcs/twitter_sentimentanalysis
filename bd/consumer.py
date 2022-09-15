@@ -38,9 +38,9 @@ for msg in consumer:
     data = record['data']
 
    data_sender.append(record['data'])
-    k += 1
-    if k >= nb_upload:
-       # Ingest data into MongoDB
+   k += 1
+   if k >= nb_upload:
+      # Ingest data into MongoDB
       try:
          collection.insert_many(data_sender)
          print("Data inserted into MongoDB")
