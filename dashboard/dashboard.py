@@ -2,6 +2,7 @@
 import pymongo
 import streamlit as st
 import plotly.express as px
+import plotly.graph_objects as go
 import pandas as pd
 import auth_token as auth
 
@@ -29,7 +30,7 @@ def get_data():
 
 items = get_data()
 
-st.title('Tweeter sentiment analysis')
+st.title('Twitter sentiment analysis')
 
 st.markdown('''Twitter sentiment analysis using the keyword ClimateCrisis''')
 
@@ -50,15 +51,13 @@ if option == 'Pie Chart':
 
     #plotly
     #Pie chart of the sentiment count
-    fig1 = px.pie(sentiment_count, names='sentiment', values='nb_sentiment', color=['lightgreen', 'red', 'darkorange'])
-    fig1.update_layout(showlegend=False,
-                    title="Piechart des sentiments",
-                    title_x=0.5,
-                    #xaxis_title='nb_sentiment',
-                    #yaxis_title='sentiment'
-                    )
-    fig1.update_traces(textinfo='percent+label')
-    st.plotly_chart(fig1)
+    colors = ['red', 'darkorange', 'lightgreen']
+    fig = go.Figure(data=[go.Pie(
+                             labels=sentiment_count.sentiment,
+                             values=sentiment_count.nb_sentiment)])
+    fig.update_traces(hoverinfo='value', textinfo='label+percent', textfont_size=20,
+                  marker=dict(colors=colors))
+    st.plotly_chart(fig)
 
 if option =='Distribution Chart':
     #distribution chart
