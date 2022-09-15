@@ -5,7 +5,7 @@ import auth_token as auth
 
 # Connect to MongoDB and database
 try:
-   cluster = MongoClient("mongodb+srv://admin:admin@cluster0.g0zvq8k.mongodb.net/?retryWrites=true&w=majority")
+   cluster = MongoClient(auth.uri_mongo_2)
    db = cluster['sentiment_analysis']
    collection = db["raw_tweet"]
    print("Connected successfully!")
@@ -18,7 +18,7 @@ ip_server = auth.bootstrap_server
 
 
 consumer = KafkaConsumer(
-    topic_name,
+     topic_name,
      bootstrap_servers=[ip_server],
      auto_offset_reset='latest',
      enable_auto_commit=True,

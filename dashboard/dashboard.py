@@ -50,7 +50,7 @@ if option == 'Pie Chart':
 
     #plotly
     #Pie chart of the sentiment count
-    fig1 = px.pie(sentiment_count, names='sentiment', values='nb_sentiment', color=['green', 'red', 'yellow'])
+    fig1 = px.pie(sentiment_count, names='sentiment', values='nb_sentiment', color=['lightgreen', 'red', 'darkorange'])
     fig1.update_layout(showlegend=False,
                     title="Piechart des sentiments",
                     title_x=0.5,
