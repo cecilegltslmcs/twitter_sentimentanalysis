@@ -39,12 +39,12 @@ if option == "Home":
     with col1:
         st.write(' ')
     with col2:
-        st.image("Twitter-logo.png", width=150)
+        st.image("img/Twitter-logo.png", width=150)
     with col3:
         st.write(' ')
     st.header("Welcome to the dashboard about tweets sentiments related to climate crisis.\
                In order to choose your analysis, select an option on the sidebar.")
-    st.image("pxclimateaction-g25a4b047f_1920.jpg")
+    st.image("img/pxclimateaction-g25a4b047f_1920.jpg")
     st.write("Réalisé par Aurélien Blanc, Cécile Guillot & Matthieu Cavaillon")
 
 placeholder = st.empty()
@@ -86,6 +86,7 @@ while True:
             fig3.add_trace(go.Box(y=y_negative.polarity, name='Negative', marker_color = 'indianred'))
             fig3.add_trace(go.Box(y=y_neutral.polarity, name = 'Neutral', marker_color = 'lightgray'))
             fig3.add_trace(go.Box(y=y_positive.polarity, name = 'Positive', marker_color = 'lightgreen'))
+            fig3.update_layout(margin=dict(t=0, b=0, l=0, r=0))
             st.subheader("Visualisation of the statistics for each sentiment")
             st.plotly_chart(fig3)
         
