@@ -5,12 +5,7 @@ import logging
 import pyfiglet
 
 
-"""API ACCESS KEYS"""
-
-# consumerKey = auth.consumerKey
-# consumerSecret = auth.consumerSecret
-# accessToken = auth.accessToken
-# accessTokenSecret = auth.accessTokenSecret
+"""API ACCESS KEYS V2"""
 bearer_token = auth.bearerToken
 ip_server = auth.bootstrap_server
 
