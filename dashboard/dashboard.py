@@ -5,6 +5,8 @@ import plotly.express as px
 import plotly.graph_objects as go
 import pandas as pd
 import time
+from wordcloud import WordCloud, STOPWORDS
+import matplotlib.pyplot as plt
 import auth_token as auth
 
 #connection to the cluster
@@ -32,7 +34,7 @@ def get_data():
 
 st.title("Twitter sentiment analysis using different keywords related to the Climate and the Environment")
 st.sidebar.title("Chart type and data")
-option = st.sidebar.selectbox("Choose your analysis.", ('Home', 'Data', 'Pie Chart', 'Distribution Chart', 'Boxplot'))
+option = st.sidebar.selectbox("Choose your analysis.", ('Home', 'Data', 'Pie Chart', 'Distribution Chart', 'Boxplot', 'Wordcloud'))
 
 if option == "Home":
     col1, col2, col3 = st.columns(3)
@@ -55,8 +57,8 @@ while True:
     with placeholder.container():
     
         df = pd.DataFrame(items)
-        df.drop("processed_text", axis=1, inplace=True)
-        df = df.astype({'_id':str ,'text':str, 'polarity':float, 'sentiment':str})
+        #df.drop("processed_text", axis=1, inplace=True)
+        df = df.astype({'_id':str ,'text':str, "processed_text": str, 'polarity':float, 'sentiment':str})
 
         if option == "Data":
             counts = len(df.index)
@@ -89,5 +91,16 @@ while True:
             fig3.update_layout(margin=dict(t=0, b=0, l=0, r=0))
             st.subheader("Visualisation of the statistics for each sentiment")
             st.plotly_chart(fig3)
+
+        if option == "Wordcloud":
+            fig4, ax = plt.subplots()        
+            words = ' '.join(df['processed_text'])
+            wordcloud = WordCloud(stopwords=STOPWORDS,\
+                                  background_color='white',\
+                                  width=800, height=640).generate(words)
+            ax.imshow(wordcloud, interpolation = 'bilinear')
+            ax.axis("off")
+            st.subheader("Visualisation of the wordCloud")
+            st.write(fig4)
         
         time.sleep(1)
