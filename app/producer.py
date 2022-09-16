@@ -13,7 +13,7 @@ bearer_token = auth.bearerToken
 ip_server = auth.bootstrap_server
 
 producer = KafkaProducer(bootstrap_servers=ip_server)
-search_term = 'ClimateCrisis lang:en'
+search_term = 'Climate lang:en'
 topic_name = 'twitter-mac'
 
 client = tweepy.Client(bearer_token=bearer_token,
