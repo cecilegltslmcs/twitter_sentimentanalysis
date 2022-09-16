@@ -2,6 +2,8 @@ import tweepy
 import auth_token as auth
 from kafka import KafkaProducer
 import logging
+import pyfiglet
+
 
 """API ACCESS KEYS"""
 
@@ -13,7 +15,9 @@ bearer_token = auth.bearerToken
 ip_server = auth.bootstrap_server
 
 producer = KafkaProducer(bootstrap_servers=ip_server)
-search_term = 'Climate'
+search_term = 'climate OR environment OR ClimateCrisis OR ClimateEmergency\
+               OR ClimateAction OR energy OR ActOnClimate OR SaveEarth OR\
+               (global AND warning) OR SaveOurOcean OR ActNow'
 topic_name = 'twitter-mac'
 
 client = tweepy.Client(bearer_token=bearer_token,
@@ -44,8 +48,11 @@ class TweetListener(tweepy.StreamingClient):
         self.add_rules(tweepy.StreamRule(search_term))
         self.add_rules(tweepy.StreamRule("lang:en"))
         self.filter()
-        
+
 if __name__ == '__main__':
+    T_art = 'PRODUCER RUNNING'
+    ASCII_art_1 = pyfiglet.figlet_format(T_art)
+    print(ASCII_art_1)
     #init twitter_stream class
     twitter_stream = TweetListener(bearer_token)
     twitter_stream.start_streaming_tweets(search_term)
