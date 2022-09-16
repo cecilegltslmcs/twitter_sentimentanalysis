@@ -1,0 +1,15 @@
+version: '3.9'
+
+services:
+    producer: 
+        build: 
+            context: .
+            dockerfile: app/Dockerfile_producer
+    app:
+        build: 
+            context: .
+            dockerfile: app/Dockerfile_app
+    dashboard:
+        build:
+            context: .
+            dockerfile: dashboard/Dockerfile_dashboard
