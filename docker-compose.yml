@@ -9,6 +9,10 @@ services:
         build: 
             context: .
             dockerfile: app/Dockerfile_app
+    bd:
+        build:
+             context: .
+             dockerfile: bd/Dockerfile_mongo
     dashboard:
         build:
             context: .
