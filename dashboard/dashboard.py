@@ -4,8 +4,8 @@ import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
 import pandas as pd
-import auth_token as auth
 import time
+import auth_token as auth
 
 #connection to the cluster
 #connect to MongoDB and database
