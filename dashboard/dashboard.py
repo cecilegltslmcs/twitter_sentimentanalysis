@@ -30,7 +30,7 @@ def get_data():
     items = list(items)  # make hashable for st.experimental_memo
     return items
 
-st.title("Twitter sentiment analysis using the keyword 'ClimateCrisis'")
+st.title("Twitter sentiment analysis using different keywords related to the Climate and the Environment")
 st.sidebar.title("Chart type and data")
 option = st.sidebar.selectbox("Choose your analysis.", ('Home', 'Data', 'Pie Chart', 'Distribution Chart', 'Boxplot'))
 
