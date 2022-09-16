@@ -43,6 +43,7 @@ class TweetListener(tweepy.StreamingClient):
         self.filter()
 
 if __name__ == '__main__':
+    #feedback in console
     T_art = 'PRODUCER RUNNING'
     ASCII_art_1 = pyfiglet.figlet_format(T_art)
     print(ASCII_art_1)
