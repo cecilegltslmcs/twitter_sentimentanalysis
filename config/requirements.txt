@@ -3,5 +3,7 @@ kafka-python
 pyspark
 vaderSentiment
 pymongo
+pymongo[srv]
 streamlit
 plotly==5.10.0
+pyfiglet
