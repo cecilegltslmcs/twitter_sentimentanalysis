@@ -12,7 +12,7 @@ ip_server = auth.bootstrap_server
 producer = KafkaProducer(bootstrap_servers=ip_server)
 search_term = 'climate OR environment OR ClimateCrisis OR ClimateEmergency\
                OR ClimateAction OR energy OR ActOnClimate OR SaveEarth OR\
-               (global AND warning) OR SaveOurOcean OR ActNow'
+               (global AND warming) OR SaveOurOcean OR ActNow'
 topic_name = 'twitter-mac'
 
 client = tweepy.Client(bearer_token=bearer_token,
