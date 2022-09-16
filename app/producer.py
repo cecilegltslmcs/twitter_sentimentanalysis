@@ -13,7 +13,7 @@ bearer_token = auth.bearerToken
 ip_server = auth.bootstrap_server
 
 producer = KafkaProducer(bootstrap_servers=ip_server)
-search_term = 'Climate lang:en'
+search_term = 'Climate'
 topic_name = 'twitter-mac'
 
 client = tweepy.Client(bearer_token=bearer_token,
@@ -42,10 +42,9 @@ class TweetListener(tweepy.StreamingClient):
 
     def start_streaming_tweets(self, search_term):
         self.add_rules(tweepy.StreamRule(search_term))
+        self.add_rules(tweepy.StreamRule("lang:en"))
         self.filter()
-        #self.filter(track=search_term, stall_warnings=True, languages=["en"])
-
-
+        
 if __name__ == '__main__':
     #init twitter_stream class
     twitter_stream = TweetListener(bearer_token)
