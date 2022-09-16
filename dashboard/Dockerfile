@@ -1,4 +1,5 @@
 FROM ubuntu:latest
+
 RUN apt-get update &&\
     apt-get install -y python3 &&\
     python3-pip -y &&\
@@ -6,6 +7,6 @@ RUN apt-get update &&\
 
 WORKDIR /home/user
 
-COPY dashboard.py dashaboard.py
+COPY dashboard.py dashboard.py
 
 CMD streamlit run dashboard.py
