@@ -21,8 +21,6 @@ client = tweepy.Client(bearer_token=bearer_token,
 def twitterAuth():
     # create the authentication object
     authenticate = tweepy.OAuth2BearerHandler(bearer_token)
-    ## set the access token and the access token secret
-    #authenticate.set_access_token(accessToken, accessTokenSecret)
     # create the API object
     api = tweepy.API(authenticate, wait_on_rate_limit=True)
     return api
