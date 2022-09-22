@@ -1,12 +1,11 @@
 
 # builder step used to download and configure spark environment
 FROM openjdk:8-jre-alpine as builder
-
 # Add Dependencies for PySpark
 RUN apt-get update &&\
     apt-get install -y curl vim wget software-properties-common ssh net-tools ca-certificates &&\
     apt-get install -y python3 python3-pip &&\
-    pip install -r requirements.txt
+    pip install -r config/requirements.txt
 
 RUN update-alternatives --install "/usr/bin/python" "python" "$(which python3)" 1
 
@@ -48,6 +47,6 @@ RUN mkdir -p $SPARK_LOG_DIR && \
     ln -sf /dev/stdout $SPARK_WORKER_LOG
 
 COPY start-spark.sh /
-COPY app.py /
+COPY app.py app.py
 
-CMD ["/bin/bash", "/start-spark.sh", "spark-submit --packages "org.apache.spark:spark-sql-kafka-0-10_2.12:3.3.0,org.mongodb.spark:mongo-spark-connector_2.12:3.0.1" app.py"]
+ENTRYPOINT ["/bin/bash", "/start-spark.sh", "spark-submit --packages "org.apache.spark:spark-sql-kafka-0-10_2.12:3.3.0,org.mongodb.spark:mongo-spark-connector_2.12:3.0.1" app.py"]
