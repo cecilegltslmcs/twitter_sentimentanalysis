@@ -9,7 +9,7 @@ import findspark
 
 findspark.init()
 
-ip_server = auth.bootstrap_server
+ip_server = "localhost:9092"
 topic_name = "twitter-mac"
 
 analyzer = SentimentIntensityAnalyzer()
