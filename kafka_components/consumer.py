@@ -13,7 +13,7 @@ except:
    print("Could not connect to MongoDB")
     
 topic_name = 'twitter-mac'
-ip_server = auth.bootstrap_server
+ip_server = "localhost:9092"
 # ip_server = "51.38.185.58:9092" 
 
 
