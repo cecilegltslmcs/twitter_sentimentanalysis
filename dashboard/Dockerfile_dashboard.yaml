@@ -5,8 +5,8 @@ RUN apt-get update &&\
     apt-get install python3-pip -y &&\
     pip install -r config/requirements.txt
 
-WORKDIR /home/user
+WORKDIR /home/user/dashboard
 
-COPY dashboard.py dashboard.py
+COPY /dashboard/* /home/user/dashboard
 
 ENTRYPOINT ["streamlit run dashboard.py"]
