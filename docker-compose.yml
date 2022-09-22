@@ -63,6 +63,7 @@ services:
              MONGO_INITDB_ROOT_USERNAME: root
              MONGO_INITDB_ROOT_PASSWORD: example
     streamlit:
+        container_name: streamlit
         build:
             context: .
             dockerfile: dashboard/Dockerfile_dashboard
