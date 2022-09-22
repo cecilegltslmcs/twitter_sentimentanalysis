@@ -14,7 +14,7 @@ RUN apt-get update &&\
 
 WORKDIR /home/user/kafka_components
 
-COPY /kafka_components/* /home/user/kafka_components/producer.py
+COPY /kafka_components/* /home/user/kafka_components/
 
 ENTRYPOINT ["python3 producer.py"]
 
