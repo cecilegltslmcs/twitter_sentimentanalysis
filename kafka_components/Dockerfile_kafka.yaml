@@ -1,0 +1,21 @@
+FROM ubuntu: latest
+
+RUN wget https://www.apache.org/dyn/closer.cgi?path=/kafka/3.2.1/kafka_2.13-3.2.1.tgz
+
+RUN tar -xzf kafka_2.13-3.2.1.tgz &&\
+    cd kafka_2.13-3.2.1
+    bin/zookeeper-server-start.sh config/zookeeper.properties
+    bin/kafka-server-start.sh config/server.properties
+
+RUN apt-get update &&\
+    apt-get install -y python3 &&\
+    apt-get install python3-pip -y &&\
+    pip install -r requirements.txt
+
+WORKDIR /home/user/kafka_components
+
+COPY producer.py producer.py
+
+ENTRYPOINT ["python3 producer.py"]
+
+
