@@ -7,7 +7,7 @@ import pyfiglet
 
 """API ACCESS KEYS V2"""
 bearer_token = auth.bearerToken
-ip_server = auth.bootstrap_server
+ip_server = "localhost:9092"
 
 producer = KafkaProducer(bootstrap_servers=ip_server)
 search_term = 'climate OR environment OR ClimateCrisis OR ClimateEmergency\
