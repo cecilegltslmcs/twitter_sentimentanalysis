@@ -1,6 +1,7 @@
 
 # builder step used to download and configure spark environment
 FROM openjdk:8-jre-alpine as builder
+
 # Add Dependencies for PySpark
 RUN apt-get update &&\
     apt-get install -y curl vim wget software-properties-common ssh net-tools ca-certificates &&\
