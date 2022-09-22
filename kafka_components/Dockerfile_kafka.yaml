@@ -1,4 +1,4 @@
-FROM ubuntu: latest
+FROM ubuntu:latest
 
 RUN wget https://www.apache.org/dyn/closer.cgi?path=/kafka/3.2.1/kafka_2.13-3.2.1.tgz
 
