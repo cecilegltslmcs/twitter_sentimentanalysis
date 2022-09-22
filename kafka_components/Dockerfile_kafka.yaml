@@ -10,7 +10,7 @@ RUN tar -xzf kafka_2.13-3.2.1.tgz &&\
 RUN apt-get update &&\
     apt-get install -y python3 &&\
     apt-get install python3-pip -y &&\
-    pip install -r requirements.txt
+    pip install -r config/requirements.txt
 
 WORKDIR /home/user/kafka_components
 
