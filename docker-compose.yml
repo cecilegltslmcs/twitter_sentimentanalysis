@@ -1,19 +1,73 @@
 version: '3.9'
 
 services:
-    producer: 
-        build: 
-            context: .
-            dockerfile: app/Dockerfile_producer
-    app:
-        build: 
-            context: .
-            dockerfile: app/Dockerfile_app
-    bd:
-        build:
-             context: .
-             dockerfile: bd/Dockerfile_mongo
-    dashboard:
+    zookeeper:
+        image: wurstmeister/zookeeper
+        container_name: zookeeper
+        ports:
+          - "2181:2181"
+    kafka:
+        image: wurstmeister/kafka
+        container_name: kafka
+        ports:
+        - "9092:9092"
+        environment:
+            KAFKA_ADVERTISED_HOST_NAME: localhost
+            KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+    spark:
+        image: cluster-apache-spark:3.0.2
+        ports:
+           - "9090:8080"
+           - "7077:7077"
+        volumes:
+           - ./apps:/opt/spark-apps
+           - ./data:/opt/spark-data
+        environment:
+           - SPARK_LOCAL_IP=spark-master
+           - SPARK_WORKLOAD=master
+    spark-worker-a:
+        image: cluster-apache-spark:3.0.2
+        ports:
+           - "9091:8080"
+           - "7000:7000"
+        depends_on:
+           - spark-master
+        environment:
+            - SPARK_MASTER=spark://spark-master:7077
+            - SPARK_WORKER_CORES=1
+            - SPARK_WORKER_MEMORY=1G
+            - SPARK_DRIVER_MEMORY=1G
+            - SPARK_EXECUTOR_MEMORY=1G
+            - SPARK_WORKLOAD=worker
+            - SPARK_LOCAL_IP=spark-worker-a
+        volumes:
+            - ./apps:/opt/spark-apps
+            - ./data:/opt/spark-data
+    spark-worker-b:
+        image: cluster-apache-spark:3.0.2
+        ports:
+            - "9092:8080"
+            - "7001:7000"
+        depends_on:
+            - spark-master
+        environment:
+            - SPARK_MASTER=spark://spark-master:7077
+            - SPARK_WORKER_CORES=1
+            - SPARK_WORKER_MEMORY=1G
+            - SPARK_DRIVER_MEMORY=1G
+            - SPARK_EXECUTOR_MEMORY=1G
+            - SPARK_WORKLOAD=worker
+            - SPARK_LOCAL_IP=spark-worker-b
+        volumes:
+            - ./apps:/opt/spark-apps
+            - ./data:/opt/spark-data
+    mongodb:
+         image: mongo
+         restart: always
+         environment:
+             MONGO_INITDB_ROOT_USERNAME: root
+             MONGO_INITDB_ROOT_PASSWORD: example
+    streamlit:
         build:
             context: .
             dockerfile: dashboard/Dockerfile_dashboard
