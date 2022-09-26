@@ -47,6 +47,7 @@ if __name__ == '__main__':
     T_art = 'PRODUCER RUNNING'
     ASCII_art_1 = pyfiglet.figlet_format(T_art)
     print(ASCII_art_1)
+
     #init twitter_stream class
     twitter_stream = TweetListener(bearer_token)
     twitter_stream.start_streaming_tweets(search_term)
