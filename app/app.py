@@ -101,7 +101,7 @@ if __name__ == "__main__":
             .format("console")
             .start()
             .awaitTermination())"""
-    
+              
     """# parquet file dumping
     parquet = sentiment_tweets.repartition(1)
     query2 = (parquet

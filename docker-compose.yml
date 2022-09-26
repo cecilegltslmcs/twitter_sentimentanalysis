@@ -27,3 +27,5 @@ services:
         build:
             context: .
             dockerfile: dashboard/Dockerfile_dashboard
+        ports:
+            - "80:80"
