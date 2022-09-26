@@ -8,7 +8,7 @@ time.sleep(60)
 
 # API ACCESS KEYS V2
 bearer_token = "AAAAAAAAAAAAAAAAAAAAAOOcgwEAAAAA1hJMtyYRRJ4YChdYhyXTkL0uldE%3DNVax1u4M5cROmdTKLpi32uHR9pUGB28QQz2FhcIXAqQSkNxHF1"
-producer = KafkaProducer(bootstrap_servers=["kafka:9092"])
+producer = KafkaProducer(bootstrap_servers="kafka:9092")
 
 search_term = 'climate OR environment OR ClimateCrisis OR ClimateEmergency\
                OR ClimateAction OR energy OR ActOnClimate OR SaveEarth OR\
