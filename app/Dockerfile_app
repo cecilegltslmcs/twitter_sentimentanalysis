@@ -5,7 +5,8 @@ WORKDIR /home/user/app
 COPY app/* /home/user/app/
 
 RUN apt-get update &&\
-    apt-get install -y curl vim wget software-properties-common ssh net-tools python3 python3-pip &&\
+    apt-get install openjdk-8-jdk -y &&\
+    apt-get install -y python3 python3-pip &&\
     pip install -r requirements.txt
 
 ENTRYPOINT ["python3", "app.py"]
