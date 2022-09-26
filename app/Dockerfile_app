@@ -8,15 +8,4 @@ RUN apt-get update &&\
     apt-get install -y curl vim wget software-properties-common ssh net-tools python3 python3-pip &&\
     pip install -r requirements.txt
 
-RUN update-alternatives --install "/usr/bin/python" "python" "$(which python3)" 1
-
-RUN apt-get -y install openjdk-8-jdk-headless &&\
-    wget https://dlcdn.apache.org/spark/spark-3.3.0/spark-3.3.0-bin-hadoop3-scala2.13.tgz &&\
-    mkdir -p /usr/local/spark-3.3.0 &&\
-    tar -zxf spark-3.3.0-bin-hadoop3-scala2.13.tgz -C /usr/local/spark-3.3.0/ &&\
-    rm spark-3.3.0-bin-hadoop3-scala2.13.tgz
-
-ENV SPARK_HOME="/usr/local/spark-3.3.0/spark-3.3.0-bin-hadoop3"
-ENV PATH=$PATH:$SPARK_HOME/bin
-
-ENTRYPOINT ["python3", "./app.py"]
+ENTRYPOINT ["python3", "app.py"]
