@@ -1,8 +1,9 @@
 from pyspark.sql import functions as F
-import auth_token as auth
 from pyspark.sql.types import StringType, FloatType
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import from_json, col
+import os
+import os.path
 import re
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 import findspark
@@ -64,11 +65,13 @@ def write_row(batch_df , batch_id):
         .save()
     pass
 
+package = os.path.join(os.environ["app"], "app/jars_package")
+package_jar = [os.path.join(package, x) for x in os.listdir(package)]
+
 if __name__ == "__main__":
     spark = (SparkSession
         .builder
-        .config("spark.jars", "org.apache.spark:spark-sql-kafka-0-10_2.12:3.3.0")
-        .config("spark.jars", "org.mongodb.spark:mongo-spark-connector_2.12:3.0.1")
+        .config("spark.jars", ",".join(package_jar))
         .config("spark.mongodb.input.uri", "localhost:27017")
         .config("spark.mongodb.output.uri", "localhost:27017")
         .appName("TwitterSentimentAnalysis")
