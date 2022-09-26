@@ -93,14 +93,14 @@ if __name__ == "__main__":
     polarity_tweets = raw_tweets.withColumn("polarity", polarity(col("processed_text")))
     sentiment_tweets = polarity_tweets.withColumn("sentiment", sentiment(col("polarity")))
 
-    """ # console display (debug mode)
+    # console display (debug mode)
     query = (sentiment_tweets
             .writeStream
             .queryName("test_tweets")
             .outputMode("append")
             .format("console")
             .start()
-            .awaitTermination())"""
+            .awaitTermination())
               
     """# parquet file dumping
     parquet = sentiment_tweets.repartition(1)
@@ -114,9 +114,9 @@ if __name__ == "__main__":
         .start()
         .awaitTermination())"""
 
-    # mongodb dumping
+    """# mongodb dumping
     query = (sentiment_tweets
             .writeStream
             .foreachBatch(write_row)
             .start()
-            .awaitTermination())
+            .awaitTermination())"""

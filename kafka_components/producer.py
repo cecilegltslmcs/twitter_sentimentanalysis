@@ -1,15 +1,14 @@
 import tweepy
-import auth_token as auth
 from kafka import KafkaProducer
 import logging
 import pyfiglet
 
 
 """API ACCESS KEYS V2"""
-bearer_token = auth.bearerToken
-ip_server = "localhost:9092"
+bearer_token = "AAAAAAAAAAAAAAAAAAAAAOOcgwEAAAAA1hJMtyYRRJ4YChdYhyXTkL0uldE%3DNVax1u4M5cROmdTKLpi32uHR9pUGB28QQz2FhcIXAqQSkNxHF1"
+#ip_server = ["127.0.0.1:9092"]
 
-producer = KafkaProducer(bootstrap_servers=ip_server)
+producer = KafkaProducer(bootstrap_servers=["51.38.185.58:9092"])
 search_term = 'climate OR environment OR ClimateCrisis OR ClimateEmergency\
                OR ClimateAction OR energy OR ActOnClimate OR SaveEarth OR\
                (global AND warming) OR SaveOurOcean OR ActNow'

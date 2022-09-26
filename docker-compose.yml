@@ -5,63 +5,63 @@ networks:
     driver: bridge
 
 services:
-    zookeeper:
-        image: zookeeper:latest
-        restart: always
-        hostname: zookeeper
-        networks:
-        - kafkazoo
-        ports:
-           - 2181:2181
+    #zookeeper:
+        #image: 'bitnami/zookeeper:latest'
+        #restart: always
+        #networks:
+            #- kafkazoo
+        #ports:
+           #- "2181:2181"
+        #environment:
+            #- ALLOW_ANONYMOUS_LOGIN=yes 
 
-    kafka:
-    # Verified images from Docker Hub: https://hub.docker.com/r/bitnami/kafka
-        image: bitnami/kafka:latest
-        networks:
-        - kafkazoo
-        ports:
-           - 9092:9092
-        volumes:
-           - ./kafka_components/logs:/bitnami/kafka
-        hostname: kafka
-        environment:
-           - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
-           - ALLOW_PLAINTEXT_LISTENER=yes
-           - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
-           - KAFKA_BROKER_ID=0
-           - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CLIENT:PLAINTEXT
-           - KAFKA_CFG_LISTENERS=CLIENT://:9092
-           - KAFKA_CFG_ADVERTISED_LISTENERS=CLIENT://kafka:9092
-           - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=CLIENT
-        depends_on:
-           - zookeeper
+    #kafka:
+    # Verified image from Docker Hub: https://hub.docker.com/r/bitnami/kafka
+        #image: 'bitnami/kafka:latest'
+        #networks:
+           #- kafkazoo
+        #ports:
+           #- "9092:9092"
+        #volumes:
+           #- ./kafka_components/logs:/bitnami/kafka
+        #environment:
+           #- KAFKA_BROKER_ID=1
+           #- KAFKA_CFG_LISTENERS=PLAINTEXT://127.0.0.1:9092
+           #- KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+           #- ALLOW_PLAINTEXT_LISTENER=yes
+        #depends_on:
+           #- zookeeper
     
-    kafka-consummer-app:
-        container_name:  kafka_consummer_app
-        build: 
-            context: ./kafka_components
-            dockerfile: Dockerfile_kafka_app
-        networks:
-        - kafkazoo
-        depends_on:
-        - kafka
+    #kafka-producer-app:
+        #container_name: kafka_producer
+        #build: 
+            #context: ./kafka_components
+            #dockerfile: Dockerfile_kafka
+        #networks:
+           #- kafkazoo
+        #depends_on:
+           #- kafka
 
-    spark:
-        container_name: spark
-        build:
-            context: .
-            dockerfile: app/Dockerfile_app
+    #spark:
+        #container_name: spark
+        #build:
+            #context: .
+            #dockerfile: app/Dockerfile_app
+        #depends_on:
+            # - kafka
 
     mongodb:
-    # Official images from Docker Hub: https://hub.docker.com/_/mongo 
-         container_name: mongo
-         image: mongo
-         restart: always
-         ports:
-             - 27017:27017
-         environment:
-             MONGO_INITDB_ROOT_USERNAME: root
-             MONGO_INITDB_ROOT_PASSWORD: example
+    # Official image from Docker Hub: https://hub.docker.com/_/mongo 
+        container_name: mongo
+        image: mongo
+        restart: always
+        ports:
+            - 27017:27017
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: root
+            MONGO_INITDB_ROOT_PASSWORD: example
+        #depends_on:
+            #- spark
 
     streamlit:
         container_name: streamlit
@@ -70,9 +70,11 @@ services:
             dockerfile: dashboard/Dockerfile_dashboard
         ports:
             - 80:80
+        depends_on: 
+            - mongo
 
-volumes:
-    zookeeper_data:
-        driver: local
-    kafka_data:
-        driver: local
+#volumes:
+    #zookeeper_data:
+        #driver: local
+    #kafka_data:
+        #driver: local

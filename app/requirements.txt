@@ -1,0 +1,4 @@
+findspark==2.0.1
+pymongo==4.2.0
+pyspark==3.3.0
+vaderSentiment==3.3.2

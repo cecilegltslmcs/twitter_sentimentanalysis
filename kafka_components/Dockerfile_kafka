@@ -1,14 +1,12 @@
-FROM alpine:latest
-# Official image from Docker Hub: https://hub.docker.com/_/alpine
+FROM ubuntu:latest
+# Official image from Docker Hub: https://hub.docker.com/_/ubuntu
+
+WORKDIR /home/user/kafka_components
+COPY . .
 
 RUN apt-get update &&\
     apt-get install -y python3 &&\
     apt-get install python3-pip -y &&\
-    pip install -r config/requirements.txt
+    pip install -r requirements.txt
 
-WORKDIR /home/user/
-COPY . .
-
-ENTRYPOINT ["python3", "./producer.py"]
-
-
+ENTRYPOINT ["python3", "producer.py"]

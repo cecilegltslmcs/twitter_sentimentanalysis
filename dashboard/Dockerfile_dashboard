@@ -1,12 +1,11 @@
 FROM ubuntu:latest
 
-RUN apt-get update &&\
-    apt-get install -y python3 &&\
-    apt-get install python3-pip -y &&\
-    pip install -r config/requirements.txt
-
 WORKDIR /home/user/dashboard
 
-COPY /dashboard/* /home/user/dashboard
+COPY dashboard/* /home/user/dashboard/
 
-ENTRYPOINT ["streamlit run dashboard.py"]
+RUN apt-get update &&\
+    apt-get install -y python3 python3-pip &&\
+    pip install -r requirements.txt
+
+ENTRYPOINT ["streamlit", "run", "dashboard.py"]
