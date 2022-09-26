@@ -1,5 +1,5 @@
-FROM ubuntu:latest
-
+FROM alpine:latest
+# Official image from Docker Hub: https://hub.docker.com/_/alpine
 
 RUN apt-get update &&\
     apt-get install -y python3 &&\

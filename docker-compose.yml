@@ -5,15 +5,8 @@ networks:
     driver: bridge
 
 services:
-  zookeeper:
-    image: zookeeper:latest
-    restart: always
-    hostname: zookeeper
-    networks:
-    - kafkazoo
-    ports:
-      - 2181:2181
 
+<<<<<<< HEAD
   kafka:
     image: bitnami/kafka:latest
     networks:
@@ -44,6 +37,46 @@ services:
     - kafkazoo
     depends_on:
       - kafka
+=======
+    zookeeper:
+        image: zookeeper:latest
+        restart: always
+        hostname: zookeeper
+        networks:
+           - kafkazoo
+        ports:
+           - 2181:2181
+    
+    kafka:
+    # Verified image from Docker Hub : https://hub.docker.com/r/bitnami/kafka
+        image: bitnami/kafka:latest
+        networks:
+           - kafkazoo
+        ports:
+           - 9092:9092
+        volumes:
+           - ./kafka_components/logs:/bitnami/kafka
+        hostname: kafka
+        environment:
+           - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+           - ALLOW_PLAINTEXT_LISTENER=yes
+           - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
+           - KAFKA_BROKER_ID=1
+           - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092
+           - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://127.0.0.1:9092
+        depends_on:
+           - zookeeper
+    
+    kafka-consummer-app:
+        container_name:  kafka_consummer_app
+        build: 
+            context: ./kafka_components
+            dockerfile: Dockerfile_kafka_app
+        networks:
+            - kafkazoo
+        depends_on:
+            - kafka
+>>>>>>> d49be99 (update dockerfile & docker-compose)
 
     spark:
         container_name: spark
@@ -52,6 +85,7 @@ services:
             dockerfile: app/Dockerfile_app
 
     mongodb:
+    # Official images from Docker Hub: https://hub.docker.com/_/mongo 
          container_name: mongo
          image: mongo
          restart: always
@@ -70,7 +104,7 @@ services:
             - 80:80
 
 volumes:
-  zookeeper_data:
-    driver: local
-  kafka_data:
-    driver: local
+    zookeeper_data:
+        driver: local
+    kafka_data:
+        driver: local
