@@ -48,22 +48,26 @@ services:
       - kafka
 
   spark:
-       container_name: spark
-       build:
-           context: .
-           dockerfile: app/Dockerfile_app
-       networks:
-       - kafkazoo
-       depends_on:
-           - kafka
+  # Official image from Docker Hub: https://hub.docker.com/r/apache/spark-py
+    container_name: spark
+    image: apache/spark-py:latest
+    build:
+      context: .
+      dockerfile: app/Dockerfile_app
+    networks:
+      - kafkazoo
+    ports:
+      - "40:40"
+    depends_on:
+      - kafka
 
   mongodb:
       # Official image from Docker Hub: https://hub.docker.com/_/mongo 
     container_name: mongo
-    image: mongo
+    image: mongo:latest
     restart: always
     ports:
-    - 27017:27017
+    - "27017:27017"
     networks:
     - kafkazoo
     environment:
@@ -78,7 +82,7 @@ services:
           context: .
           dockerfile: dashboard/Dockerfile_dashboard
       ports:
-          - 81:81
+          - "81:81"
       networks:
       - kafkazoo
       depends_on: 
