@@ -12,7 +12,8 @@ time.sleep(90)
 findspark.init()
 findspark.add_jars(['package_jars/org.apache.spark_spark-sql-kafka-0-10_2.12-3.3.0.jar',
                     'package_jars/mongo-spark-connector-10.0.4.jar',
-                    'package_jars/mongodb-driver-core-4.5.1.jar'])
+                    'package_jars/mongodb-driver-core-4.5.1.jar',
+                    'package_jars/kafka-clients-3.2.0.jar'])
 
 ip_server = "kafka:9092"
 topic_name = "twitter-mac"
