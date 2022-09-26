@@ -82,7 +82,7 @@ services:
       networks:
       - kafkazoo
       depends_on: 
-          - mongo
+          - mongodb
 
 volumes:
   zookeeper_data:
