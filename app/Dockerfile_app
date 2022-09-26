@@ -2,7 +2,7 @@ FROM ubuntu:latest
 
 WORKDIR /home/user/app
 
-COPY app/* /home/user/app/
+COPY . .
 
 RUN apt-get update &&\
     apt-get install openjdk-8-jdk -y &&\

@@ -52,8 +52,8 @@ services:
     container_name: spark
     image: apache/spark-py:latest
     build:
-      context: .
-      dockerfile: app/Dockerfile_app
+      context: ./app
+      dockerfile: Dockerfile_app
     networks:
       - kafkazoo
     ports:
@@ -79,8 +79,8 @@ services:
   streamlit:
       container_name: streamlit
       build:
-          context: .
-          dockerfile: dashboard/Dockerfile_dashboard
+          context: ./dashboard
+          dockerfile: Dockerfile_dashboard
       ports:
           - "81:81"
       networks:
