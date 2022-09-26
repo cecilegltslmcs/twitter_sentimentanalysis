@@ -9,4 +9,4 @@ WORKDIR /home/user/dashboard
 
 COPY /dashboard/* /home/user/dashboard
 
-ENTRYPOINT ["streamlit run dashboard.py"]
+ENTRYPOINT ["streamlit", "run dashboard.py"]
