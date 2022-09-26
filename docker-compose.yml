@@ -78,7 +78,7 @@ services:
           context: .
           dockerfile: dashboard/Dockerfile_dashboard
       ports:
-          - 80:80
+          - 81:81
       networks:
       - kafkazoo
       depends_on: 

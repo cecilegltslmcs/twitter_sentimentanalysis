@@ -7,14 +7,13 @@ import pandas as pd
 import time
 from wordcloud import WordCloud, STOPWORDS
 import matplotlib.pyplot as plt
-import auth_token as auth
 
 #connection to the cluster
 #connect to MongoDB and database
 
 @st.experimental_singleton
 def init_connection():
-    return pymongo.MongoClient("mongodb:27017")
+    return pymongo.MongoClient("mongodb://root:example@mongodb:27017/")
 
 try:
     cluster = init_connection()
@@ -57,6 +56,7 @@ while True:
     with placeholder.container():
     
         df = pd.DataFrame(items)
+        print(df)
         #df.drop("processed_text", axis=1, inplace=True)
         df = df.astype({'_id':str ,'text':str, "processed_text": str, 'polarity':float, 'sentiment':str})
 
@@ -93,7 +93,7 @@ while True:
             st.plotly_chart(fig3)
 
         if option == "Wordcloud":
-            fig4, ax = plt.subplots()        
+            fig4, ax = plt.subplots()     
             words = ' '.join(df['processed_text'])
             wordcloud = WordCloud(stopwords=STOPWORDS,\
                                   background_color='white',\

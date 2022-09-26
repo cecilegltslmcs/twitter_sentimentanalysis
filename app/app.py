@@ -2,15 +2,13 @@ from pyspark.sql import functions as F
 from pyspark.sql.types import StringType, FloatType
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import from_json, col
-import os
-import os.path
 import re
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 import findspark
 
 findspark.init()
 
-ip_server = "localhost:9092"
+ip_server = "kafka:9092"
 topic_name = "twitter-mac"
 
 analyzer = SentimentIntensityAnalyzer()
@@ -65,13 +63,12 @@ def write_row(batch_df , batch_id):
         .save()
     pass
 
-package = os.path.join(os.environ["app"], "app/jars_package")
-package_jar = [os.path.join(package, x) for x in os.listdir(package)]
-
 if __name__ == "__main__":
     spark = (SparkSession
         .builder
-        .config("spark.jars", ",".join(package_jar))
+        .config("spark.jars", "app/mongo-spark-connector-10.0.4.jar")
+        .config("spark.jars", "app/mongodb-driver-core-4.5.1.jar")
+        .config("spark.jars", "app/org.apache.spark_spark-sql-kafka-0-10_2.12-3.3.0.jar")
         .config("spark.mongodb.input.uri", "mongodb:27017")
         .config("spark.mongodb.output.uri", "mongodb:27017")
         .appName("TwitterSentimentAnalysis")
