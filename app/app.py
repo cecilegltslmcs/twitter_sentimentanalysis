@@ -67,8 +67,10 @@ def write_row(batch_df , batch_id):
 if __name__ == "__main__":
     spark = (SparkSession
         .builder
-        .config("spark.mongodb.input.uri", auth.uri_mongo)
-        .config("spark.mongodb.output.uri", auth.uri_mongo)
+        .config("spark.jars", "org.apache.spark:spark-sql-kafka-0-10_2.12:3.3.0")
+        .config("spark.jars", "org.mongodb.spark:mongo-spark-connector_2.12:3.0.1")
+        .config("spark.mongodb.input.uri", "localhost:27017")
+        .config("spark.mongodb.output.uri", "localhost:27017")
         .appName("TwitterSentimentAnalysis")
         .getOrCreate())
     sc = spark.sparkContext.setLogLevel("ERROR")
