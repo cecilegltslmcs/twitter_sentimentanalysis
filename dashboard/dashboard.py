@@ -8,6 +8,8 @@ import time
 from wordcloud import WordCloud, STOPWORDS
 import matplotlib.pyplot as plt
 
+time.sleep(120)
+
 #connection to the cluster
 #connect to MongoDB and database
 

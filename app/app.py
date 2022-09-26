@@ -5,6 +5,9 @@ from pyspark.sql.functions import from_json, col
 import re
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 import findspark
+import time
+
+time.sleep(90)
 
 findspark.init()
 findspark.add_jars(['package_jars/org.apache.spark_spark-sql-kafka-0-10_2.12-3.3.0.jar',

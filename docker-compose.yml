@@ -1,4 +1,4 @@
-version: '3.9'
+version: '3.7'
 
 networks:
   kafkazoo:
@@ -6,37 +6,35 @@ networks:
 
 services:
   zookeeper:
-    image: bitnami/zookeeper:latest
+    image: 'bitnami/zookeeper:latest'
+    container_name: zookeeper
     networks:
     - kafkazoo
     ports:
-      - 2181:2181
+      - "2181:2181"
     environment:
     - ALLOW_ANONYMOUS_LOGIN=yes
 
   kafka:
-    image: bitnami/kafka:latest
+    image: 'bitnami/kafka:latest'
+    container_name: kafka
     networks:
     - kafkazoo
     ports:
-    - 9092:9092
-    - 29092:29092
+    - "9092:9092"
     volumes:
     - ./kafka_components/logs:/bitnami/kafka
     environment:
-    - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
-    - ALLOW_PLAINTEXT_LISTENER=yes
-    - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
-    - KAFKA_BROKER_ID=0
-    - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CLIENT:PLAINTEXT
-    - KAFKA_CFG_LISTENERS=CLIENT://:9092
-    - KAFKA_CFG_ADVERTISED_LISTENERS=CLIENT://kafka:9092
-    - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=CLIENT
+      - KAFKA_BROKER_ID=1
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
     depends_on:
-    - zookeeper
+      - zookeeper
 
   kafka-producer-app:
-    container_name:  kafka_producer_app
+    container_name: kafka_producer_app
     build:
       context: ./kafka_components
       dockerfile: Dockerfile_kafka_app
@@ -46,24 +44,24 @@ services:
       - "80:80"
     depends_on:
       - kafka
-
+  
   spark:
   # Official image from Docker Hub: https://hub.docker.com/r/apache/spark-py
     container_name: spark
-    image: apache/spark-py:latest
+    image: 'apache/spark-py:latest'
     build:
       context: ./app
       dockerfile: Dockerfile_app
     networks:
       - kafkazoo
     ports:
-      - "40:40"
+      - "8080:8080"
     depends_on:
       - kafka
 
   mongodb:
       # Official image from Docker Hub: https://hub.docker.com/_/mongo 
-    container_name: mongo
+    container_name: mongodb
     image: mongo:latest
     restart: always
     ports:
