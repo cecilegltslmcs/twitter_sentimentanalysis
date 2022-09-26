@@ -47,13 +47,15 @@ services:
     depends_on:
       - kafka
 
-  # spark:
-  #     container_name: spark
-  #     build:
-  #         context: .
-  #         dockerfile: app/Dockerfile_app
-  #     depends_on:
-  #         - kafka
+  spark:
+       container_name: spark
+       build:
+           context: .
+           dockerfile: app/Dockerfile_app
+       networks:
+       - kafkazoo
+       depends_on:
+           - kafka
 
   mongodb:
       # Official image from Docker Hub: https://hub.docker.com/_/mongo 
@@ -62,11 +64,13 @@ services:
     restart: always
     ports:
     - 27017:27017
+    networks:
+    - kafkazoo
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
-    #depends_on:
-    #- spark
+    depends_on:
+    - spark
 
   streamlit:
       container_name: streamlit
@@ -75,10 +79,10 @@ services:
           dockerfile: dashboard/Dockerfile_dashboard
       ports:
           - 80:80
+      networks:
+      - kafkazoo
       depends_on: 
           - mongo
-
-
 
 volumes:
   zookeeper_data:
