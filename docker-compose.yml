@@ -5,53 +5,20 @@ networks:
     driver: bridge
 
 services:
-
-<<<<<<< HEAD
-  kafka:
-    image: bitnami/kafka:latest
-    networks:
-    - kafkazoo
-    ports:
-    - 9092:9092
-    volumes:
-    - ./kafka_components/logs:/bitnami/kafka
-    hostname: kafka
-    environment:
-    - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
-    - ALLOW_PLAINTEXT_LISTENER=yes
-    - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
-    - KAFKA_BROKER_ID=0
-    - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CLIENT:PLAINTEXT
-    - KAFKA_CFG_LISTENERS=CLIENT://:9092
-    - KAFKA_CFG_ADVERTISED_LISTENERS=CLIENT://kafka:9092
-    - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=CLIENT
-    depends_on:
-    - zookeeper
-
-  kafka-consummer-app:
-    container_name:  kafka_consummer_app
-    build: 
-      context: ./kafka_components
-      dockerfile: Dockerfile_kafka_app
-    networks:
-    - kafkazoo
-    depends_on:
-      - kafka
-=======
     zookeeper:
         image: zookeeper:latest
         restart: always
         hostname: zookeeper
         networks:
-           - kafkazoo
+        - kafkazoo
         ports:
            - 2181:2181
-    
+
     kafka:
-    # Verified image from Docker Hub : https://hub.docker.com/r/bitnami/kafka
+    # Verified images from Docker Hub: https://hub.docker.com/r/bitnami/kafka
         image: bitnami/kafka:latest
         networks:
-           - kafkazoo
+        - kafkazoo
         ports:
            - 9092:9092
         volumes:
@@ -61,9 +28,11 @@ services:
            - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
            - ALLOW_PLAINTEXT_LISTENER=yes
            - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
-           - KAFKA_BROKER_ID=1
-           - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092
-           - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://127.0.0.1:9092
+           - KAFKA_BROKER_ID=0
+           - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CLIENT:PLAINTEXT
+           - KAFKA_CFG_LISTENERS=CLIENT://:9092
+           - KAFKA_CFG_ADVERTISED_LISTENERS=CLIENT://kafka:9092
+           - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=CLIENT
         depends_on:
            - zookeeper
     
@@ -73,10 +42,9 @@ services:
             context: ./kafka_components
             dockerfile: Dockerfile_kafka_app
         networks:
-            - kafkazoo
+        - kafkazoo
         depends_on:
-            - kafka
->>>>>>> d49be99 (update dockerfile & docker-compose)
+        - kafka
 
     spark:
         container_name: spark
