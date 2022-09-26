@@ -14,7 +14,7 @@ import auth_token as auth
 
 @st.experimental_singleton
 def init_connection():
-    return pymongo.MongoClient(auth.uri_mongo_2)
+    return pymongo.MongoClient("localhost:27017")
 
 try:
     cluster = init_connection()
@@ -41,12 +41,12 @@ if option == "Home":
     with col1:
         st.write(' ')
     with col2:
-        st.image("img/Twitter-logo.png", width=150)
+        st.image("Twitter-logo.png", width=150)
     with col3:
         st.write(' ')
     st.header("Welcome to the dashboard about tweets sentiments related to climate crisis.\
                In order to choose your analysis, select an option on the sidebar.")
-    st.image("img/pxclimateaction-g25a4b047f_1920.jpg")
+    st.image("pxclimateaction-g25a4b047f_1920.jpg")
     st.write("Réalisé par Aurélien Blanc, Cécile Guillot & Matthieu Cavaillon")
 
 placeholder = st.empty()
