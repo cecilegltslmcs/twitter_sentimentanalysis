@@ -14,7 +14,7 @@ import auth_token as auth
 
 @st.experimental_singleton
 def init_connection():
-    return pymongo.MongoClient("localhost:27017")
+    return pymongo.MongoClient("mongodb:27017")
 
 try:
     cluster = init_connection()

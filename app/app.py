@@ -72,8 +72,8 @@ if __name__ == "__main__":
     spark = (SparkSession
         .builder
         .config("spark.jars", ",".join(package_jar))
-        .config("spark.mongodb.input.uri", "localhost:27017")
-        .config("spark.mongodb.output.uri", "localhost:27017")
+        .config("spark.mongodb.input.uri", "mongodb:27017")
+        .config("spark.mongodb.output.uri", "mongodb:27017")
         .appName("TwitterSentimentAnalysis")
         .getOrCreate())
     sc = spark.sparkContext.setLogLevel("ERROR")
@@ -99,13 +99,13 @@ if __name__ == "__main__":
     sentiment_tweets = polarity_tweets.withColumn("sentiment", sentiment(col("polarity")))
 
     # console display (debug mode)
-    query = (sentiment_tweets
+    """query = (sentiment_tweets
             .writeStream
             .queryName("test_tweets")
             .outputMode("append")
             .format("console")
             .start()
-            .awaitTermination())
+            .awaitTermination())"""
               
     """# parquet file dumping
     parquet = sentiment_tweets.repartition(1)
@@ -119,9 +119,9 @@ if __name__ == "__main__":
         .start()
         .awaitTermination())"""
 
-    """# mongodb dumping
+    # mongodb dumping
     query = (sentiment_tweets
             .writeStream
             .foreachBatch(write_row)
             .start()
-            .awaitTermination())"""
+            .awaitTermination())
