@@ -1,12 +1,9 @@
-FROM ubuntu:latest
+FROM python:3.9
 # Official image from Docker Hub: https://hub.docker.com/_/ubuntu
 
 WORKDIR /home/user/kafka_components
 COPY . .
 
-RUN apt-get update &&\
-    apt-get install -y python3 &&\
-    apt-get install python3-pip -y &&\
-    pip install -r requirements.txt
+RUN pip install -r requirements.txt
 
 ENTRYPOINT ["python3", "producer.py"]
