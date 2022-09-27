@@ -24,7 +24,7 @@ except:
     print('Connection error')
 
 
-# Pull data from the collection.
+# Pull data from the collection
 # Uses st.experimental_memo to only rerun when the query changes or after 10 min.
 @st.experimental_memo(ttl=1)
 def get_data():
