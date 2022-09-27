@@ -2,12 +2,13 @@ from pyspark.sql import functions as F
 from pyspark.sql.types import StringType, FloatType
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import from_json, col
+from pyspark.sql.types import StringType, StructType, StructField, DateType, IntegerType, FloatType
 import re
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 import findspark
 import time
 
-time.sleep(90)
+time.sleep(5)
 
 findspark.init()
 findspark.add_jars(['package_jars/org.apache.spark_spark-sql-kafka-0-10_2.12-3.3.0.jar',
@@ -73,23 +74,47 @@ def write_row(batch_df , batch_id):
 if __name__ == "__main__":
     spark = (SparkSession
         .builder
-        .master('spark://spark-server:8080')
+        .master('spark://spark:7077')
         .config("spark.mongodb.input.uri", "mongodb:27017")
         .config("spark.mongodb.output.uri", "mongodb:27017")
         .appName("TwitterSentimentAnalysis")
         .getOrCreate())
-    sc = spark.sparkContext.setLogLevel("ERROR")
+    #sc = spark.sparkContext.setLogLevel("ERROR")
 
-    raw_json = spark.read.json("tweet.json",\
-                                multiLine=True)
+    schema = StructType([
+        StructField("user_id", StringType(), True),
+        StructField("created_at", DateType(), True),
+        StructField("text", StringType(), True),
+        StructField("tweet_id", StringType(), True),
+        StructField("user_loc", StringType(), True),
+        StructField("user_name", StringType(), True),
+        StructField("user_alias", StringType(), True),
+        StructField("user_follower", IntegerType(), True),
+        StructField("user_following", IntegerType(), True), 
+        StructField("user_tweet_count", IntegerType(), True)                            
+        ])
+    
+    
     df = (spark
         .readStream
         .format("kafka")
         .option("kafka.bootstrap.servers", ip_server)
         .option("subscribe", topic_name)
         .load()
-        .withColumn("value", from_json(col("value").cast("string"), raw_json.schema))
-        .select(col('value.data.text')))
+        .withColumn("value", from_json(col("value").cast("string"), schema))
+    )
+    
+    df = df.select(col('value.user_id').alias('user_id'),
+                  col('value.created_at').alias('created_at'),
+                  col('value.text').alias('text'),
+                  col('value.tweet_id').alias('tweet_id'),
+                  col('value.user_loc').alias('user_loc'),
+                  col('value.user_name').alias('user_name'),
+                  col('value.user_alias').alias('user_alias'),
+                  col('value.user_follower').alias('user_follower'),
+                  col('value.user_following').alias('user_following'),
+                  col('value.user_tweet_count').alias('user_tweet_count')
+                )
 
     clean_tweets = F.udf(cleanTweet, StringType())
     raw_tweets = df.withColumn('processed_text', clean_tweets(col("text")))
