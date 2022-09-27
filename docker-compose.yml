@@ -24,8 +24,6 @@ services:
     - kafkazoo
     ports:
     - "9092:9092"
-    volumes:
-    - ./kafka_components/logs:/bitnami/kafka
     environment:
     - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
     - ALLOW_PLAINTEXT_LISTENER=yes
@@ -47,20 +45,6 @@ services:
       - "80:80"
     depends_on:
       - kafka
-  
-  # spark:
-  # # Official image from Docker Hub: https://hub.docker.com/r/apache/spark-py
-  #   container_name: spark
-  #   image: 'apache/spark-py:latest'
-  #   build:
-  #     context: ./app
-  #     dockerfile: Dockerfile_app
-  #   networks:
-  #     - kafkazoo
-  #   ports:
-  #     - "8080:8080"
-  #   depends_on:
-  #     - kafka
 
   spark-server:
     image: bitnami/spark:latest
