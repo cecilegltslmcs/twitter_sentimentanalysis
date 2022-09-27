@@ -15,7 +15,7 @@ time.sleep(120)
 
 @st.experimental_singleton
 def init_connection():
-    return pymongo.MongoClient("mongodb://root:example@mongodb:27017/")
+    return pymongo.MongoClient("mongodb://root:example@mongodb:27017")
 
 try:
     cluster = init_connection()
