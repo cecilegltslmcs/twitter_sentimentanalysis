@@ -4,7 +4,7 @@ import logging
 import pyfiglet
 import time
 
-time.sleep(120)
+time.sleep(90)
 
 # API ACCESS KEYS V2
 bearer_token = "AAAAAAAAAAAAAAAAAAAAAOOcgwEAAAAA1hJMtyYRRJ4YChdYhyXTkL0uldE%3DNVax1u4M5cROmdTKLpi32uHR9pUGB28QQz2FhcIXAqQSkNxHF1"
