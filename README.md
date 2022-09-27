@@ -20,7 +20,7 @@ The aim of this project is to realize a sentiment analysis related to a specific
 
 A kappa/lambda architecture will be build.
 
-![ALT](Pipeline.drawio1.png)
+![ALT](architecture_app.png)
 
 ***
 ## Objectif du projet
@@ -44,4 +44,4 @@ Une fois les tweets nettoyés et analysés par notre algorithme, les information
 
 ## Schéma de l'architecture
 
-![ALT](Pipeline.drawio1.png)
+![ALT](architecture_app.png)
