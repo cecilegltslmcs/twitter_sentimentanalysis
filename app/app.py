@@ -78,7 +78,7 @@ if __name__ == "__main__":
         .config("spark.jars.packages","org.mongodb.spark:mongo-spark-connector_2.12:3.0.1")
         .appName("TwitterSentimentAnalysis")
         .getOrCreate())
-    #sc = spark.sparkContext.setLogLevel("ERROR")
+    sc = spark.sparkContext.setLogLevel("ERROR")
     
     raw_json = spark.read.json("tweet.json",\
                                 multiLine=True)
