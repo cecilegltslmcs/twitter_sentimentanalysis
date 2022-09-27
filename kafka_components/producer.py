@@ -1,23 +1,31 @@
 import tweepy
 from kafka import KafkaProducer
+import auth_token as auth
 import logging
 import pyfiglet
 import time
+import json
 
 time.sleep(60)
 
 # API ACCESS KEYS V2
-bearer_token = "AAAAAAAAAAAAAAAAAAAAAOOcgwEAAAAA1hJMtyYRRJ4YChdYhyXTkL0uldE%3DNVax1u4M5cROmdTKLpi32uHR9pUGB28QQz2FhcIXAqQSkNxHF1"
-producer = KafkaProducer(bootstrap_servers="kafka:9092")
+bearer_token = auth.bearerTokenauth_token.py
+client = tweepy.Client(bearer_token=bearer_token,
+                       return_type=dict)
+
+
+#Producer config
+ip_server = "kafka:9092"
+producer = KafkaProducer(bootstrap_servers = ip_server, 
+                         value_serializer = lambda x:json.dumps(x).encode('utf-8'))
+topic_name = 'twitter-mac'
+
+
 
 search_term = 'climate OR environment OR ClimateCrisis OR ClimateEmergency\
                OR ClimateAction OR energy OR ActOnClimate OR SaveEarth OR\
                (global AND warming) OR SaveOurOcean OR ActNow'
-topic_name = 'twitter-mac'
-
-client = tweepy.Client(bearer_token=bearer_token,
-                       return_type=dict)
-
+               
 def twitterAuth():
     # create the authentication object
     authenticate = tweepy.OAuth2BearerHandler(bearer_token)
@@ -27,9 +35,21 @@ def twitterAuth():
 
 class TweetListener(tweepy.StreamingClient):
 
-    def on_data(self, raw_data):
-        logging.info(raw_data)
-        producer.send(topic_name, value=raw_data)
+    def on_data(self, data):
+        jsonData = json.loads(data)
+        dict_data= {
+            'user_id' :jsonData['data']['author_id'],
+            'created_at' : jsonData['data']['created_at'],
+            'text': jsonData['data']['text'],
+            'tweet_id': jsonData['data']['id'],
+            'user_loc':  (jsonData['includes']['users'][0]['location'] if 'location' in jsonData['includes']['users'][0] else 'Null'  ) ,
+            'user_name': jsonData['includes']['users'][0]['name'],
+            'user_alias': jsonData['includes']['users'][0]['username'],
+            'user_follower': jsonData['includes']['users'][0]['public_metrics']['followers_count'],
+            'user_following': jsonData['includes']['users'][0]['public_metrics']['following_count'],
+            'user_tweet_count':jsonData['includes']['users'][0]['public_metrics']['tweet_count']
+        }
+        producer.send(topic_name, value=dict_data)
         return True
 
     def on_error(self, status_code):
@@ -40,7 +60,8 @@ class TweetListener(tweepy.StreamingClient):
     def start_streaming_tweets(self, search_term):
         self.add_rules(tweepy.StreamRule(search_term))
         self.add_rules(tweepy.StreamRule("lang:en"))
-        self.filter()
+        self.filter(expansions="author_id",tweet_fields=['author_id','created_at','text'],
+                    user_fields = ["name", "username", "location", "public_metrics"])
 
 if __name__ == '__main__':
     #feedback in console
