@@ -2,7 +2,7 @@
 
 **Status: In Progress**
 
-**Last Update: 15/09/2022**
+**Last Update: 27/09/2022**
 
 *French Version below*
 
