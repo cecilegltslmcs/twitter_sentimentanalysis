@@ -20,12 +20,11 @@ except:
     print('Connection error')
 
 # Pull data from the collection
-# Uses st.experimental_memo to only rerun when the query changes or after 10 min.
 @st.experimental_memo(ttl=1)
 def get_data():
     db = client['sentiment_analysis']
     items = db['tweet_streaming'].find()
-    items = list(items)  # make hashable for st.experimental_memo
+    items = list(items)
     return items
 
 st.title("Twitter sentiment analysis using different keywords related to the Climate and the Environment")
