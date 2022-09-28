@@ -20,23 +20,23 @@ The project is based on a big data architecture in real-time. The schema of this
 
 This project is created with:
 
-- [API Twitter](!https://developer.twitter.com/en/docs/twitter-api)
-- [Apache Kafka](!https://kafka.apache.org/documentation/)
-- [Apache Spark](!https://spark.apache.org/)
-- [Docker](!https://www.docker.com/)
-- [MongoDB](!https://www.mongodb.com/)
-- [vaderSentiment](!https://vadersentiment.readthedocs.io/en/latest/)
-- [Streamlit](!https://streamlit.io/)
+- [API Twitter](https://developer.twitter.com/en/docs/twitter-api)
+- [Apache Kafka](https://kafka.apache.org/documentation/)
+- [Apache Spark](https://spark.apache.org/)
+- [Docker](https://www.docker.com/)
+- [MongoDB](https://www.mongodb.com/)
+- [vaderSentiment](https://vadersentiment.readthedocs.io/en/latest/)
+- [Streamlit](https://streamlit.io/)
 
 ## Setup
 
 To run this project:
 
 ```
-docker compose up 
+docker-compose up 
 ```
 
-To run the dashboard:
+To run the dashboard in your browser:
 
 ```
 localhost:8501
