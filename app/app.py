@@ -1,23 +1,33 @@
+"""Spark job which collect, clean & analyze contains of tweets"""
+
+import findspark
+import pyfiglet
+import pymongo
 from pyspark.sql import functions as F
 from pyspark.sql.types import StringType, FloatType
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import from_json, col
 from pyspark.sql.types import StringType, StructType, StructField, FloatType
 import re
-from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
-import findspark
 import time
-import pymongo
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
 time.sleep(10)
-
 findspark.init()
 
+# variables settings for kafka and mongodb
 ip_server = "kafka:9092"
 topic_name = "twitter-mac"
 uri = "mongodb://root:example@mongodb:27017"
 
+# initialize sentiment analyzer
 analyzer = SentimentIntensityAnalyzer()
+
+###############################
+###########FUNCTIONS###########
+###############################
+
+ ##### Processing tweets ######
 
 def cleanTweet(tweet: str):
     """This function cleans the tweets before
@@ -59,6 +69,8 @@ def getSentiment(polarityValue):
         return 'Neutral'
     else:
         return 'Positive'
+
+###### MongoDB Settings ######       
 class WriteRowMongo:
     def open(self, partition_id, epoch_id):
         self.myclient = pymongo.MongoClient(uri)
@@ -74,6 +86,8 @@ class WriteRowMongo:
         return True
 
 if __name__ == "__main__":
+
+    # initialize sparkSession & sparkContext
     spark = (SparkSession
         .builder
         .master('spark://spark:7077')
@@ -84,6 +98,7 @@ if __name__ == "__main__":
         .getOrCreate())
     sc = spark.sparkContext.setLogLevel("ERROR")
 
+    # read Kafka stream
     df = (spark
         .readStream
         .format("kafka")
@@ -92,22 +107,20 @@ if __name__ == "__main__":
         .load()
         )
 
+    # Schema definition & data selection
     mySchema = StructType([StructField("text", StringType(), True)])
     mySchema2 = StructType([StructField("created_at", StringType(), True)])
-
     values = df.select(
     from_json(df.value.cast("string"), mySchema).alias("tweet"),
     from_json(df.value.cast("string"), mySchema2).alias("date"),
         )
-
     df1 = values.select("tweet.*", "date.*")
 
+    # Cleaning tweets & sentiment analysis
     clean_tweets = F.udf(cleanTweet, StringType())
     raw_tweets = df1.withColumn('processed_text', clean_tweets(col("text")))
-
     polarity = F.udf(getPolarity, FloatType())
     sentiment = F.udf(getSentiment, StringType())
-
     polarity_tweets = raw_tweets.withColumn("polarity", polarity(col("processed_text")))
     sentiment_tweets = polarity_tweets.withColumn("sentiment", sentiment(col("polarity")))
 
@@ -133,7 +146,10 @@ if __name__ == "__main__":
     #     .awaitTermination())
 
     # mongodb dumping
-    query= (sentiment_tweets
+    T_art = 'COLLECT TWEETS IN PROGRESS...'
+    ASCII_art_1 = pyfiglet.figlet_format(T_art)
+    print(ASCII_art_1, flush=True)
+    query = (sentiment_tweets
                 .writeStream
                 .foreach(WriteRowMongo())
                 .start()

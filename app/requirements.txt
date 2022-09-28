@@ -1,4 +1,5 @@
 findspark
+pyfiglet
 pymongo
 pyspark
 vaderSentiment
