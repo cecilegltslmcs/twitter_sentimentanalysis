@@ -13,7 +13,7 @@ RUN apt-get update &&\
     apt-get install -y software-properties-common &&\
     add-apt-repository ppa:deadsnakes/ppa
 
-ENV PYSPARK_PYTHON python3
-
+ENV PYSPARK_PYTHON python3.10
+ENV PYSPARK_DRIVER_PYTHON python3.10
 
 ENTRYPOINT ["python3", "app.py"]
