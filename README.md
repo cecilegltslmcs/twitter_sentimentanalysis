@@ -5,6 +5,7 @@
 * [Technologies](#technologies)
 * [Setup](#setup)
 * [Status](#status)
+* [Credits](#credits)
 ## General Info
 
 The application collects tweets coming from Twitter. The relevant topic is about climate changes. The results are presented in a dashboard realized with Streamlit. 
@@ -26,14 +27,12 @@ This project is created with:
 - [vaderSentiment](https://vadersentiment.readthedocs.io/en/latest/)
 ## Setup
 
-To run this project:
-
+1) Clone the repository in your computer.
+2) Run this project:
 ```
 docker-compose up 
 ```
-
-To run the dashboard in your browser:
-
+3) Access to the dashboard in your browser:
 ```
 localhost:8501
 ```
@@ -41,3 +40,9 @@ localhost:8501
 ## Status
 
 - v1 : Working
+
+## Credits
+
+- Aurélien Blanc
+- Cécile Guillot
+- Matthieu Cavaillon
