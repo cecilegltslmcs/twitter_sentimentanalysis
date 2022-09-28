@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 
 @st.experimental_singleton
 def init_connection():
-    return pymongo.MongoClient("mongodb://user:password123@mongo:27017")
+    return pymongo.MongoClient("mongodb://mongo:27017")
 
 try:
     client = init_connection()
