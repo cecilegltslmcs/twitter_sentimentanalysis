@@ -1,5 +1,3 @@
-"""Spark job which collect, clean & analyze contains of tweets"""
-
 import database_auth as auth
 import findspark
 import pyfiglet

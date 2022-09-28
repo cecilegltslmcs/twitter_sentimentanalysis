@@ -1,17 +1,21 @@
-### create a streamlit dashboard
-import pymongo
-import streamlit as st
+import database_auth as auth
+import matplotlib.pyplot as plt
+import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-import pandas as pd
+import pymongo
+import streamlit as st
 import time
 from wordcloud import WordCloud, STOPWORDS
-import matplotlib.pyplot as plt
+
+
+user = auth.user
+password = auth.password
 
 #connect to MongoDB and database
 @st.experimental_singleton
 def init_connection():
-    return pymongo.MongoClient("mongodb://root:example@mongodb:27017/")
+    return pymongo.MongoClient("mongodb://{}:{}@mongodb:27017/".format(user, password))
 
 try:
     client = init_connection()
