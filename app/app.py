@@ -122,7 +122,7 @@ if __name__ == "__main__":
 
     # parquet file dumping
     # parquet = sentiment_tweets.repartition(1)
-    # query2 = (parquet
+    # query = (parquet
     #     .writeStream
     #     .queryName("final_tweets_parquet")
     #     .outputMode("append").format("parquet")
@@ -133,8 +133,8 @@ if __name__ == "__main__":
     #     .awaitTermination())
 
     # mongodb dumping
-    query = (sentiment_tweets
-            .writeStream
-            .foreach(WriteRowMongo())
-            .start()
-            .awaitTermination())
+    query= (sentiment_tweets
+                .writeStream
+                .foreach(WriteRowMongo())
+                .start()
+                .awaitTermination())

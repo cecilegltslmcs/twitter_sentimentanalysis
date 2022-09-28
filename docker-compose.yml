@@ -1,4 +1,4 @@
-version: '3.7'
+version: '3.9'
 
 networks:
   kafkazoo:
@@ -90,7 +90,6 @@ services:
 
 
   mongodb:
-      # Official image from Docker Hub: https://hub.docker.com/_/mongo 
     container_name: mongodb
     image: mongo:latest
     restart: always
