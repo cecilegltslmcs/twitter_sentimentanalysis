@@ -109,17 +109,36 @@ if __name__ == "__main__":
         )
 
     # Schema definition & data selection
-    mySchema = StructType([StructField("text", StringType(), True)])
-    mySchema2 = StructType([StructField("created_at", StringType(), True)])
-    values = df.select(
-    from_json(df.value.cast("string"), mySchema).alias("tweet"),
-    from_json(df.value.cast("string"), mySchema2).alias("date"),
-        )
-    df1 = values.select("tweet.*", "date.*")
+    schema = StructType([
+        StructField("user_id", StringType(), True),
+        StructField("created_at", StringType(), True),
+        StructField("text", StringType(), True),
+        StructField("tweet_id", StringType(), True),
+        StructField("user_loc", StringType(), True),
+        StructField("user_name", StringType(), True),
+        StructField("user_alias", StringType(), True),
+        StructField("user_follower", IntegerType(), True),
+        StructField("user_following", IntegerType(), True),
+        StructField("user_tweet_count", IntegerType(), True)
+        ])
+    
+    df = df.withColumn("value", from_json(col("value").cast("string"), schema))
+
+    df = df.select(col('value.user_id').alias('user_id'),
+                  col('value.created_at').alias('created_at'),
+                  col('value.text').alias('text'),
+                  col('value.tweet_id').alias('tweet_id'),
+                  col('value.user_loc').alias('user_loc'),
+                  col('value.user_name').alias('user_name'),
+                  col('value.user_alias').alias('user_alias'),
+                  col('value.user_follower').alias('user_follower'),
+                  col('value.user_following').alias('user_following'),
+                  col('value.user_tweet_count').alias('user_tweet_count')
+                )
 
     # Cleaning tweets & sentiment analysis
     clean_tweets = F.udf(cleanTweet, StringType())
-    raw_tweets = df1.withColumn('processed_text', clean_tweets(col("text")))
+    raw_tweets = df.withColumn('processed_text', clean_tweets(col("text")))
     polarity = F.udf(getPolarity, FloatType())
     sentiment = F.udf(getSentiment, StringType())
     polarity_tweets = raw_tweets.withColumn("polarity", polarity(col("processed_text")))
