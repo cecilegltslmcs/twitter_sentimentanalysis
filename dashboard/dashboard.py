@@ -61,18 +61,43 @@ while True:
             st.dataframe(df)
 
         if option == 'Pie Chart':
-            st.subheader("Distribution of the different sentiment in the tweets")
-            sentiment_count = df.groupby(['sentiment']).agg(nb_sentiment=pd.NamedAgg(column="sentiment", aggfunc="count")).reset_index()
-            colors = ['indianred', 'lightgray', 'lightgreen']
-            fig = go.Figure(data=[go.Pie(labels=sentiment_count.sentiment,values=sentiment_count.nb_sentiment)])
-            fig.update_layout(margin=dict(t=0, b=0, l=0, r=0))
-            fig.update_traces(hoverinfo='percent', textinfo='label+value', textfont_size=15, marker=dict(colors=colors))
-            st.plotly_chart(fig)
+            col1,col2 = st.columns(2)
+            with col1:
+                st.subheader("Distribution of the different sentiment in the tweets")
+                sentiment_count = df.groupby(['sentiment']).agg(nb_sentiment=pd.NamedAgg(column="sentiment", aggfunc="count")).reset_index()
+                colors = ['indianred', 'lightgray', 'lightgreen']
+                fig11 = go.Figure(data=[go.Pie(labels=sentiment_count.sentiment,values=sentiment_count.nb_sentiment)])
+                fig11.update_layout(margin=dict(t=0, b=0, l=0, r=0))
+                fig11.update_traces(hoverinfo='percent', textinfo='label+value', textfont_size=15, marker=dict(colors=colors))
+                st.plotly_chart(fig11)
+            
+            with col2 :
+                st.subheader("Tweet by sentiment and by account size")
+                
+                def small_medium_big(x):
+                    res = "big"
+                    if x < 100 :
+                        res = "small"
+                    elif x < 1000 :
+                        res = "medium"
+                    return res
+                
+                df['account_size'] = df['user_follower'].apply(small_medium_big)
+                sentiment_size = df.groupby(['sentiment','account_size']).size().reset_index(name='nb_tweet')
+            fig12 = px.histogram(sentiment_size, x='account_size', y='nb_tweet',
+                                    color='sentiment', barmode='group')
+            st.plotly_chart(fig12)
 
         if option =="Distribution Chart":
-            st.subheader("Number of tweets by polarity")
-            fig2 = px.histogram(df, x="polarity", opacity=0.7, log_y=True)
-            st.plotly_chart(fig2)
+            col1, col2 = st.columns(2)
+            with col1 :
+                st.subheader("Number of tweets by polarity")
+                fig21 = px.histogram(df, x="polarity", opacity=0.7, log_y=True)
+                st.plotly_chart(fig21)
+            with col2:
+                st.subheader('Tweet polarity by datetime')
+                fig22 = px.line(df.sort_values(by='created_at'), x='created_at', y='polarity')
+                st.plotly_chart(fig22)
 
         if option =="Boxplot":
             y_neutral = df.loc[df["sentiment"] == "Neutral"]
