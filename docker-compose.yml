@@ -89,33 +89,30 @@ services:
       - spark
 
 
-  # mongodb:
-  #     # Official image from Docker Hub: https://hub.docker.com/_/mongo 
-  #   container_name: mongodb
-  #   image: mongo:latest
-  #   restart: always
-  #   ports:
-  #     - "27017:27017"
-  #   networks:
-  #     - kafkazoo
-  #   environment:
-  #     - MONGO_INITDB_ROOT_USERNAME=root
-  #     - MONGO_INITDB_ROOT_PASSWORD=example
-  #     - MONGO_INITDB_DATABASE=sentiment_analysis
-  #   depends_on:
-  #     - spark-app
-  #   # volumes:
-  #     # - './data:/data/db'
+  mongodb:
+      # Official image from Docker Hub: https://hub.docker.com/_/mongo 
+    container_name: mongodb
+    image: mongo:latest
+    restart: always
+    ports:
+      - "27017:27017"
+    networks:
+      - kafkazoo
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=example
+      - MONGO_INITDB_DATABASE=sentiment_analysis
+    depends_on:
+      - spark-app
 
-
-  # streamlit:
-  #   container_name: streamlit
-  #   build:
-  #     context: ./dashboard
-  #     dockerfile: Dockerfile_dashboard
-  #   ports:
-  #     - "8501:8501"
-  #   networks:
-  #     - kafkazoo
-  #   depends_on: 
-  #     - mongodb
+  streamlit:
+    container_name: streamlit
+    build:
+      context: ./dashboard
+      dockerfile: Dockerfile_dashboard
+    ports:
+      - "8501:8501"
+    networks:
+      - kafkazoo
+    depends_on: 
+      - mongodb

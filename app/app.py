@@ -87,18 +87,18 @@ if __name__ == "__main__":
         .load()
         )
 
-    mySchema = StructType([StructField("value.text", StringType(), True)])
-    mySchema2 = StructType([StructField("value.created_at", StringType(), True)])
+    mySchema = StructType([StructField("text", StringType(), True)])
+    mySchema2 = StructType([StructField("created_at", StringType(), True)])
 
     values = df.select(
-    from_json(df.value.cast("string"), mySchema).alias("text"),
+    from_json(df.value.cast("string"), mySchema).alias("tweet"),
     from_json(df.value.cast("string"), mySchema2).alias("date"),
         )
 
-    df = values.select("text.*", "date.*")
+    df1 = values.select("tweet.*", "date.*")
 
     clean_tweets = F.udf(cleanTweet, StringType())
-    raw_tweets = df.withColumn('processed_text', clean_tweets(col("text")))
+    raw_tweets = df1.withColumn('processed_text', clean_tweets(col("text")))
 
     polarity = F.udf(getPolarity, FloatType())
     sentiment = F.udf(getSentiment, StringType())

@@ -31,13 +31,12 @@ def twitterAuth():
 class TweetListener(tweepy.StreamingClient):
     
     def on_tweet(self, tweet):
-        #print(f"{tweet.id} {tweet.created_at}: {tweet.text}")
         data = tweet.data
         data["id"] = (tweet.id)
+        data["text"] = (tweet.text)
         data["created_at"] = str(tweet.created_at)
         print(data, flush=True)
         producer.send(topic_name, data)
-        #print("-" * 50)
         
 
     def on_error(self, status_code):
