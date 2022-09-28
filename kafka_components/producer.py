@@ -40,13 +40,24 @@ def twitterAuth():
 
 class TweetListener(tweepy.StreamingClient):
     # create the streamingclient  object to collect tweets
-    def on_tweet(self, tweet):
-        data = tweet.data
-        data["id"] = (tweet.id)
-        data["text"] = (tweet.text)
-        data["created_at"] = str(tweet.created_at)
-        print(data, flush=True)
-        producer.send(topic_name, data)
+    def on_data(self, data):
+        jsonData = json.loads(data)
+        dict_data= {
+            'user_id' :jsonData['data']['author_id'],
+            'created_at' : jsonData['data']['created_at'],
+            'text': jsonData['data']['text'],
+            'tweet_id': jsonData['data']['id'],
+            'user_loc':  (jsonData['includes']['users'][0]['location'] if 'location' in jsonData['includes']['users'][0] else 'Null'  ) ,
+            'user_name': jsonData['includes']['users'][0]['name'],
+            'user_alias': jsonData['includes']['users'][0]['username'],
+            'user_follower': jsonData['includes']['users'][0]['public_metrics']['followers_count'],
+            'user_following': jsonData['includes']['users'][0]['public_metrics']['following_count'],
+            'user_tweet_count':jsonData['includes']['users'][0]['public_metrics']['tweet_count']
+        }
+        print(dict_data, flush= True)
+        producer.send(topic_name, value=dict_data)
+        
+        return True
         
 
     def on_error(self, status_code):
