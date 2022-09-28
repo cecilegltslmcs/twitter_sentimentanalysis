@@ -2,11 +2,12 @@ from pyspark.sql import functions as F
 from pyspark.sql.types import StringType, FloatType
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import from_json, col
-from pyspark.sql.types import StringType, StructType, StructField, DateType, IntegerType, FloatType
+from pyspark.sql.types import StringType, StructType, StructField, FloatType
 import re
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 import findspark
 import time
+import pymongo
 
 time.sleep(10)
 
@@ -14,6 +15,7 @@ findspark.init()
 
 ip_server = "kafka:9092"
 topic_name = "twitter-mac"
+uri = "mongodb://root:example@mongodb:27017"
 
 analyzer = SentimentIntensityAnalyzer()
 
@@ -57,15 +59,19 @@ def getSentiment(polarityValue):
         return 'Neutral'
     else:
         return 'Positive'
+class WriteRowMongo:
+    def open(self, partition_id, epoch_id):
+        self.myclient = pymongo.MongoClient(uri)
+        self.mydb = self.myclient["sentiment_analysis"]
+        self.mycol = self.mydb["tweet_streaming"]
+        return True
 
-def write_row(batch_df , batch_id):
-    (batch_df
-        .write
-        .format("mongo")
-        .mode("append")
-        .save())
-    pass
+    def process(self, row):
+        self.mycol.insert_one(row.asDict())
 
+    def close(self, error):
+        self.myclient.close()
+        return True
 
 if __name__ == "__main__":
     spark = (SparkSession
@@ -73,7 +79,6 @@ if __name__ == "__main__":
         .master('spark://spark:7077')
         .config("spark.mongodb.input.uri", "mongodb://mongodb:27017/sentiment_analysis.tweet_streaming")
         .config("spark.mongodb.output.uri", "mongodb://mongodb:27017/sentiment_analysis.tweet_streaming")
-        .config("spark.jars.packages","org.mongodb.spark:mongo-spark-connector_2.12:3.0.1")
         .config("spark.jars.packages", "org.apache.spark:spark-sql-kafka-0-10_2.12:3.1.2")
         .appName("TwitterSentimentAnalysis")
         .getOrCreate())
@@ -107,29 +112,29 @@ if __name__ == "__main__":
     sentiment_tweets = polarity_tweets.withColumn("sentiment", sentiment(col("polarity")))
 
     # console display (debug mode)
-    query = (sentiment_tweets
-            .writeStream
-            .queryName("test_tweets")
-            .outputMode("append")
-            .format("console")
-            .start()
-            .awaitTermination())
-
-    """# parquet file dumping
-    parquet = sentiment_tweets.repartition(1)
-    query2 = (parquet
-        .writeStream
-        .queryName("final_tweets_parquet")
-        .outputMode("append").format("parquet")
-        .option("path", "./parquet_save")
-        .option("checkpointLocation", "./check")
-        .trigger(processingTime='60 seconds')
-        .start()
-        .awaitTermination())"""
-
-    # mongodb dumping
     # query = (sentiment_tweets
     #         .writeStream
-    #         .foreachBatch(write_row)
+    #         .queryName("test_tweets")
+    #         .outputMode("append")
+    #         .format("console")
     #         .start()
     #         .awaitTermination())
+
+    # parquet file dumping
+    # parquet = sentiment_tweets.repartition(1)
+    # query2 = (parquet
+    #     .writeStream
+    #     .queryName("final_tweets_parquet")
+    #     .outputMode("append").format("parquet")
+    #     .option("path", "./parquet_save")
+    #     .option("checkpointLocation", "./check")
+    #     .trigger(processingTime='60 seconds')
+    #     .start()
+    #     .awaitTermination())
+
+    # mongodb dumping
+    query = (sentiment_tweets
+            .writeStream
+            .foreach(WriteRowMongo())
+            .start()
+            .awaitTermination())
