@@ -1,5 +1,6 @@
 """Spark job which collect, clean & analyze contains of tweets"""
 
+import database_auth as auth
 import findspark
 import pyfiglet
 import pymongo
@@ -18,7 +19,9 @@ findspark.init()
 # variables settings for kafka and mongodb
 ip_server = "kafka:9092"
 topic_name = "twitter-mac"
-uri = "mongodb://root:example@mongodb:27017"
+user = auth.user
+password = auth.password
+uri = "mongodb://{}:{}@mongodb:27017".format(user, password)
 
 # initialize sentiment analyzer
 analyzer = SentimentIntensityAnalyzer()
