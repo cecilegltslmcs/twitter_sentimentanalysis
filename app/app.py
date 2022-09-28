@@ -77,7 +77,7 @@ if __name__ == "__main__":
         .config("spark.jars.packages", "org.apache.spark:spark-sql-kafka-0-10_2.12:3.1.2")
         .appName("TwitterSentimentAnalysis")
         .getOrCreate())
-    #sc = spark.sparkContext.setLogLevel("ERROR")
+    sc = spark.sparkContext.setLogLevel("ERROR")
 
     df = (spark
         .readStream
@@ -95,10 +95,10 @@ if __name__ == "__main__":
     from_json(df.value.cast("string"), mySchema2).alias("date"),
         )
 
-    #df = values.select("text.*", "date.*")
+    df = values.select("text.*", "date.*")
 
     clean_tweets = F.udf(cleanTweet, StringType())
-    raw_tweets = values.withColumn('processed_text', clean_tweets(col("text")))
+    raw_tweets = df.withColumn('processed_text', clean_tweets(col("text")))
 
     polarity = F.udf(getPolarity, FloatType())
     sentiment = F.udf(getSentiment, StringType())
