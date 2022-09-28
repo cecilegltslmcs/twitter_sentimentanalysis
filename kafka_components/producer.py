@@ -1,26 +1,36 @@
-import tweepy
+import json
 from kafka import KafkaProducer
 import pyfiglet
 import time
-import json
+import token_API
+import tweepy
 
-time.sleep(60)
+time.sleep(20)
 
-# API ACCESS KEYS V2
-bearer_token = "AAAAAAAAAAAAAAAAAAAAAOOcgwEAAAAA46ZxQJuvf%2BDkSmpi9sCZ59sseVU%3DGMGPhSyj6icPDcqvxxAhDhG6TosGWYCBG9H0zLChuhwjYnRnXe"
+###############################
+#### VARIABLES DEFINITIONS ####
+###############################
+
+# API Access Token
+bearer_token = token_API.bearer_token
 client = tweepy.Client(bearer_token=bearer_token,
                        return_type=dict)
 
 #Producer config
 ip_server = "kafka:9092"
+topic_name = 'twitter-mac'
 producer = KafkaProducer(bootstrap_servers = ip_server,
                          value_serializer=lambda v: json.dumps(v).encode('utf-8'))
-topic_name = 'twitter-mac'
 
+# Keywords to find in tweets
 search_term = 'climate OR environment OR ClimateCrisis OR ClimateEmergency\
                OR ClimateAction OR energy OR ActOnClimate OR SaveEarth OR\
                (global AND warming) OR SaveOurOcean OR ActNow'
-               
+
+###############################
+###########FUNCTIONS###########
+###############################
+
 def twitterAuth():
     # create the authentication object
     authenticate = tweepy.OAuth2BearerHandler(bearer_token)
@@ -29,7 +39,7 @@ def twitterAuth():
     return api
 
 class TweetListener(tweepy.StreamingClient):
-    
+    # create the streamingclient  object to collect tweets
     def on_tweet(self, tweet):
         data = tweet.data
         data["id"] = (tweet.id)
@@ -41,7 +51,6 @@ class TweetListener(tweepy.StreamingClient):
 
     def on_error(self, status_code):
         if status_code == 420:
-            # returning False in on_data disconnects the stream
             return False
 
     def start_streaming_tweets(self, search_term):
@@ -51,6 +60,7 @@ class TweetListener(tweepy.StreamingClient):
                     user_fields = ["name", "username", "location", "public_metrics"])
 
 if __name__ == '__main__':
+
     #feedback in console
     T_art = 'PRODUCER RUNNING'
     ASCII_art_1 = pyfiglet.figlet_format(T_art)
