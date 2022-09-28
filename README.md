@@ -22,9 +22,8 @@ This project is created with:
 - [Apache Spark](https://spark.apache.org/)
 - [Docker](https://www.docker.com/)
 - [MongoDB](https://www.mongodb.com/)
-- [vaderSentiment](https://vadersentiment.readthedocs.io/en/latest/)
 - [Streamlit](https://streamlit.io/)
-
+- [vaderSentiment](https://vadersentiment.readthedocs.io/en/latest/)
 ## Setup
 
 To run this project:
