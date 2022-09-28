@@ -1,12 +1,5 @@
 version: '3.9'
 
-networks:
-  kafkazoo:
-    driver: bridge
-
-volumes:
-  mongodata:
-
 services:
   zookeeper:
     image: 'bitnami/zookeeper:latest'
@@ -91,19 +84,18 @@ services:
       - kafka
       - spark
 
-
-  mongodb:
-    container_name: mongodb
+  mongo:
+    container_name: mongo
     image: mongo:latest
-    restart: always
+    restart: 'on-failure'
     ports:
       - "27017:27017"
     networks:
       - kafkazoo
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=root
-      - MONGO_INITDB_ROOT_PASSWORD=example
       - MONGO_INITDB_DATABASE=sentiment_analysis
+    env_file:
+      - .env_mongo
     volumes:
       - mongodata:/data/db
     depends_on:
@@ -119,4 +111,11 @@ services:
     networks:
       - kafkazoo
     depends_on: 
-      - mongodb
+      - mongo
+
+networks:
+  kafkazoo:
+    driver: bridge
+
+volumes:
+  mongodata:

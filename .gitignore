@@ -1,4 +1,5 @@
 app/database_auth.py
 dashboard/database_auth.py
 kafka_components/token_API.py
+.env_mongo
 __pycache__

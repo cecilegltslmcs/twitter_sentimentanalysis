@@ -19,7 +19,7 @@ ip_server = "kafka:9092"
 topic_name = "twitter-mac"
 user = auth.user
 password = auth.password
-uri = "mongodb://{}:{}@mongodb:27017".format(user, password)
+uri = "mongodb://{}:{}@mongo:27017".format(user, password)
 
 # initialize sentiment analyzer
 analyzer = SentimentIntensityAnalyzer()

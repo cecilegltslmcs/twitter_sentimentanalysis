@@ -3,19 +3,15 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-import pymongo
+from pymongo import MongoClient
 import streamlit as st
 import time
 from wordcloud import WordCloud, STOPWORDS
 
-
-user = auth.user
-password = auth.password
-
 #connect to MongoDB and database
 @st.experimental_singleton
 def init_connection():
-    return pymongo.MongoClient("mongodb://{}:{}@mongodb:27017/".format(user, password))
+    return MongoClient(auth.uri_mongo)
 
 try:
     client = init_connection()
