@@ -4,6 +4,9 @@ networks:
   kafkazoo:
     driver: bridge
 
+volumes:
+  mongodata:
+
 services:
   zookeeper:
     image: 'bitnami/zookeeper:latest'
@@ -101,6 +104,8 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=root
       - MONGO_INITDB_ROOT_PASSWORD=example
       - MONGO_INITDB_DATABASE=sentiment_analysis
+    volumes:
+      - mongodata:/data/db
     depends_on:
       - spark-app
 

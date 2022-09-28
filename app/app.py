@@ -77,8 +77,8 @@ if __name__ == "__main__":
     spark = (SparkSession
         .builder
         .master('spark://spark:7077')
-        .config("spark.mongodb.input.uri", "mongodb://mongodb:27017/sentiment_analysis.tweet_streaming")
-        .config("spark.mongodb.output.uri", "mongodb://mongodb:27017/sentiment_analysis.tweet_streaming")
+        .config("spark.mongodb.input.uri", uri)
+        .config("spark.mongodb.output.uri", uri)
         .config("spark.jars.packages", "org.apache.spark:spark-sql-kafka-0-10_2.12:3.1.2")
         .appName("TwitterSentimentAnalysis")
         .getOrCreate())
