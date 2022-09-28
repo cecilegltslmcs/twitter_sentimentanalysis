@@ -59,7 +59,7 @@ while True:
             counts = len(df.index)
             st.subheader('Visualisation of the data coming from the database and the number of tweets')
             st.write("Number of tweets:", counts)
-            st.dataframe(df.tail())
+            st.dataframe(df)
 
         if option == 'Pie Chart':
             st.subheader("Distribution of the different sentiment in the tweets")
