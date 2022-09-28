@@ -1,13 +1,10 @@
 # Sentiment Analysis with Twitter
 
-**Status: First Release**
-
-**Last Update: 28/09/2022**
-
 ## Table of contents
 * [General info](#general-info)
 * [Technologies](#technologies)
 * [Setup](#setup)
+* [Status](#status)
 ## General Info
 
 The application collects tweets coming from Twitter. The relevant topic is about climate changes. The results are presented in a dashboard realized with Streamlit. 
@@ -41,3 +38,7 @@ To run the dashboard in your browser:
 ```
 localhost:8501
 ```
+
+## Status
+
+- v1 : Working
