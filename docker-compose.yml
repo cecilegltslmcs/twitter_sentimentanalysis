@@ -1,9 +1,8 @@
-version: '3.9'
+version: '3.7'
 
 networks:
   kafkazoo:
     driver: bridge
-    attachable: true
 
 services:
   zookeeper:
@@ -21,10 +20,10 @@ services:
     container_name: kafka
     networks:
       - kafkazoo
-    volumes:
-      - shared-workspace:/opt/workspace
     ports:
       - "9092:9092"
+    # volumes:
+    # - ./kafka_components/logs:/bitnami/kafka
     environment:
       - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
       - ALLOW_PLAINTEXT_LISTENER=yes
@@ -48,18 +47,22 @@ services:
       - kafka
 
   spark:
-    image: bitnami/spark:latest
+    container_name: spark
+    image: bitnami/spark:3.2.1
     environment:
       - SPARK_MODE=master
       - SPARK_RPC_AUTHENTICATION_ENABLED=no
       - SPARK_RPC_ENCRYPTION_ENABLED=no
       - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
       - SPARK_SSL_ENABLED=no
+    # ports:
+    #   - '8080:8080'
+    #   - '7077:7077'
     networks:
       - kafkazoo
 
   spark-worker:
-    image: bitnami/spark:latest
+    image: bitnami/spark:3.2.1
     environment:
       - SPARK_MODE=worker
       - SPARK_MASTER_URL=spark://spark:7077
@@ -68,7 +71,7 @@ services:
       - SPARK_RPC_AUTHENTICATION_ENABLED=no
       - SPARK_RPC_ENCRYPTION_ENABLED=no
       - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
-      - SPARK_SSL_ENABLED=no
+      - SPARK_SSL_ENABLED=no  
     networks:
       - kafkazoo
     depends_on:
@@ -80,33 +83,46 @@ services:
       dockerfile: Dockerfile_app
     networks:
       - kafkazoo
+    # ports:
+    #   - "8081:8081"
     depends_on:
       - kafka
+      - spark
 
-  mongo:
+
+  mongodb:
       # Official image from Docker Hub: https://hub.docker.com/_/mongo 
-    container_name: mongo
+    container_name: mongodb
     image: mongo:latest
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=root
-      - MONGO_INITDB_ROOT_PASSWORD=password
-      - MONGO_INITDB_DATABASE=sentiment_analysis
     restart: always
     ports:
-      - 27017:27017
+      - "27017:27017"
     networks:
       - kafkazoo
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=example
+      - MONGO_INITDB_DATABASE=sentiment_analysis
     depends_on:
       - spark-app
+    # volumes:
+      # - './data:/data/db'
+
 
   streamlit:
-      container_name: streamlit
-      build:
-        context: ./dashboard
-        dockerfile: Dockerfile_dashboard
-      ports:
-        - "8501:8501"
-      networks:
-        - kafkazoo
-      depends_on: 
-        - mongo
+    container_name: streamlit
+    build:
+      context: ./dashboard
+      dockerfile: Dockerfile_dashboard
+    ports:
+      - "8501:8501"
+    networks:
+      - kafkazoo
+    depends_on: 
+      - mongodb
+
+volumes:
+  zookeeper_data:
+    driver: local
+  kafka_data:
+    driver: local

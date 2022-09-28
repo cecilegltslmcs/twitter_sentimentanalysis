@@ -15,4 +15,5 @@ RUN apt-get update &&\
 
 ENV PYSPARK_PYTHON python3
 
+
 ENTRYPOINT ["python3", "app.py"]

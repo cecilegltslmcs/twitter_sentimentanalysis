@@ -8,25 +8,28 @@ import time
 from wordcloud import WordCloud, STOPWORDS
 import matplotlib.pyplot as plt
 
+time.sleep(120)
+
 #connection to the cluster
 #connect to MongoDB and database
 
 @st.experimental_singleton
 def init_connection():
-    return pymongo.MongoClient("mongodb://mongo:27017")
+    return pymongo.MongoClient("mongodb://root:example@mongodb:27017/")
 
 try:
-    client = init_connection()
+    cluster = init_connection()
     print('Connection OK')
 except:
     print('Connection error')
+
 
 # Pull data from the collection
 # Uses st.experimental_memo to only rerun when the query changes or after 10 min.
 @st.experimental_memo(ttl=1)
 def get_data():
-    db = client["sentiment_analysis"]
-    items = db["tweet_streaming"].find()
+    db = cluster['sentiment_analysis']
+    items = db['tweet_streaming'].find()
     items = list(items)  # make hashable for st.experimental_memo
     return items
 
@@ -57,7 +60,7 @@ while True:
         df = pd.DataFrame(items)
         print(df)
         #df.drop("processed_text", axis=1, inplace=True)
-        df = df.astype({'text':str, "processed_text": str, 'polarity':float, 'sentiment':str})
+        df = df.astype({'_id':str ,'text':str, "processed_text": str, 'polarity':float, 'sentiment':str})
 
         if option == "Data":
             counts = len(df.index)

@@ -6,6 +6,7 @@ WORKDIR /home/user/dashboard
 
 COPY . .
 
-RUN pip install -r requirements.txt
+RUN apt-get update &&\
+    pip install -r requirements.txt
 
 ENTRYPOINT ["streamlit", "run", "dashboard.py", "--server.port=8501", "--server.address=0.0.0.0"]

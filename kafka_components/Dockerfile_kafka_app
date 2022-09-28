@@ -1,8 +1,12 @@
 FROM python:3.10.7-slim-bullseye
 
+# Official image from Docker Hub: https://hub.docker.com/_/ubuntu
+
 WORKDIR /home/user/kafka_components
+
 COPY . .
 
-RUN pip install -r requirements.txt
+RUN apt-get update &&\
+    pip install -r requirements.txt
 
 ENTRYPOINT ["python3", "producer.py"]
