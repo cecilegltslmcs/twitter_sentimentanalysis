@@ -59,21 +59,19 @@ def getSentiment(polarityValue):
         return 'Positive'
 
 def write_row(batch_df , batch_id):
-    mongoURL = "mongodb://root:example@mongodb:27017/sentiment_analysis.tweet_streaming"
     (batch_df
         .write
         .format("mongo")
-        .mode("append")
-        .option("uri", mongoURL)
+        .mode("update")
         .save())
     pass
 
 if __name__ == "__main__":
     spark = (SparkSession
         .builder
-        .master("spark://spark-server:7077")
-        .config("spark.mongodb.input.uri", "mongodb://root:example@mongodb:27017/sentiment_analysis.tweet_streaming")
-        .config("spark.mongodb.output.uri", "mongodb://root:example@mongodb:27017/sentiment_analysis.tweet_streaming")
+        .master("spark://spark-master:7077")
+        .config("spark.mongodb.input.uri", "mongodb://user:password123@mongo:27017/sentiment_analysis.tweet_streaming?readPreference=primaryPreferred")
+        .config("spark.mongodb.output.uri", "mongodb://user:password123@mongo:27017/sentiment_analysis.tweet_streaming")
         .config("spark.jars.packages","org.apache.spark:spark-sql-kafka-0-10_2.12:3.3.0")
         .config("spark.jars.packages","org.mongodb.spark:mongo-spark-connector_2.12:3.0.1")
         .appName("TwitterSentimentAnalysis")

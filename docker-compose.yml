@@ -1,10 +1,19 @@
-version: '3.7'
+version: '3.9'
+
+volumes:
+  shared-workspace:
+    name: "hadoop-distributed-file-system"
+    driver: local
+  mongodata:
+    driver: local
 
 networks:
   kafkazoo:
     driver: bridge
+    attachable: true
   spark-network:
     driver: bridge
+    attachable: true
 
 services:
   zookeeper:
@@ -12,6 +21,8 @@ services:
     container_name: zookeeper
     networks:
     - kafkazoo
+    volumes:
+      - shared-workspace:/opt/workspace
     ports:
       - "2181:2181"
     environment:
@@ -22,6 +33,8 @@ services:
     container_name: kafka
     networks:
     - kafkazoo
+    volumes:
+      - shared-workspace:/opt/workspace
     ports:
     - "9092:9092"
     environment:
@@ -39,6 +52,8 @@ services:
     build:
       context: ./kafka_components
       dockerfile: Dockerfile_kafka_app
+    volumes:
+      - shared-workspace:/opt/workspace
     networks:
     - kafkazoo
     ports:
@@ -46,7 +61,7 @@ services:
     depends_on:
       - kafka
 
-  spark-server:
+  spark-master:
     image: bitnami/spark:latest
     environment:
       - SPARK_MODE=master
@@ -57,6 +72,8 @@ services:
     ports:
       - '8080:8080'
       - '7077:7077'
+    volumes:
+      - shared-workspace:/opt/workspace
     networks:
       - spark-network
 
@@ -64,13 +81,17 @@ services:
     image: bitnami/spark:latest
     environment:
       - SPARK_MODE=worker
-      - SPARK_MASTER_URL=spark://spark-server:7077
+      - SPARK_MASTER_URL=spark://spark-master:7077
       - SPARK_WORKER_MEMORY=1G
       - SPARK_WORKER_CORES=2
       - SPARK_RPC_AUTHENTICATION_ENABLED=no
       - SPARK_RPC_ENCRYPTION_ENABLED=no
       - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
-      - SPARK_SSL_ENABLED=no  
+      - SPARK_SSL_ENABLED=no
+    ports:
+      - 8081:8081
+    volumes:
+    - shared-workspace:/opt/workspace
     networks:
     - spark-network  
 
@@ -78,24 +99,30 @@ services:
     build:
       context: ./app
       dockerfile: Dockerfile_app
+    volumes:
+      - shared-workspace:/opt/workspace
     networks:
       - kafkazoo
       - spark-network
     depends_on:
       - kafka
 
-  mongodb:
+  mongo:
       # Official image from Docker Hub: https://hub.docker.com/_/mongo 
-    container_name: mongodb
+    container_name: mongo
     image: mongo:latest
+    environment:
+    - MONGO_INITDB_ROOT_USERNAME=root
+    - MONGO_INITDB_ROOT_PASSWORD=password
+    - MONGO_INITDB_DATABASE=sentiment_analysis
     restart: always
     ports:
-    - "27017:27017"
+    - 27017:27017
+    expose: 
+    - 27017
     networks:
     - kafkazoo
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
+    - spark-network
     depends_on:
     - spark-app
 
@@ -104,15 +131,12 @@ services:
       build:
           context: ./dashboard
           dockerfile: Dockerfile_dashboard
+      volumes:
+      - shared-workspace:/opt/workspace
       ports:
           - "8501:8501"
       networks:
       - kafkazoo
+      - spark-network
       depends_on: 
-          - mongodb
-
-volumes:
-  zookeeper_data:
-    driver: local
-  kafka_data:
-    driver: local
+          - mongo

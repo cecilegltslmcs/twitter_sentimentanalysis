@@ -1,5 +1,7 @@
 FROM ubuntu:latest
 
+ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/
+
 WORKDIR /home/user/app
 
 COPY . .
@@ -7,6 +9,10 @@ COPY . .
 RUN apt-get update &&\
     apt-get install openjdk-8-jdk -y &&\
     apt-get install -y python3 python3-pip &&\
-    pip install -r requirements.txt
+    pip install -r requirements.txt &&\
+    apt-get install -y software-properties-common &&\
+    add-apt-repository ppa:deadsnakes/ppa
+
+ENV PYSPARK_PYTHON python3
 
 ENTRYPOINT ["python3", "app.py"]
