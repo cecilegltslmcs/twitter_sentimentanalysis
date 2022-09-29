@@ -6,6 +6,8 @@ WORKDIR /home/user/app
 
 COPY . .
 
+ENV DEBIAN_FRONTEND=noninteractive
+
 RUN apt-get update &&\
     apt-get install openjdk-8-jdk -y &&\
     apt-get install -y python3.10 python3-pip &&\
