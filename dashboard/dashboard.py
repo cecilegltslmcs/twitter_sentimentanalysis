@@ -66,29 +66,34 @@ while True:
             counts = len(df.index)
             st.subheader('Number of tweets and general information')
             st.write("Number of tweets:", counts)
-            st.dataframe(df)
+            st.dataframe(df[['user_name','text','polarity', 'sentiment','created_at']].sort_index(ascending=False))
 
         if option == 'Sentiment Analysis Repartition':
             st.subheader("Tweets by sentiment")
             sentiment_count = df.groupby(['sentiment']).agg(nb_sentiment=pd.NamedAgg(column="sentiment", aggfunc="count")).reset_index()
             fig11 = go.Figure(data=[go.Pie(labels=sentiment_count.sentiment,values=sentiment_count.nb_sentiment)])
-            fig11.update_traces(hoverinfo='percent', textinfo='label+value', textfont_size=15)
+            colors = ['#8A3021', '#1A7C89', '#D69813']
+            fig11.update_traces(hoverinfo='percent', textinfo='label+value', textfont_size=15, marker=dict(colors=colors))
             st.plotly_chart(fig11)
             
             st.subheader("Tweets by sentiment and by account size")
             df['account_size'] = df['user_follower'].apply(small_medium_big)
             sentiment_size = df.groupby(['sentiment','account_size']).size().reset_index(name='nb_tweet')
             fig12 = px.histogram(sentiment_size, x='account_size', y='nb_tweet',
-                                 color='sentiment', barmode='group')
+                                 color='sentiment', barmode='group',
+                                 color_discrete_sequence=["#8A3021","#1A7C89","#D69813"],
+                                 category_orders={"sentiment": ["Negative", "Neutral", "Positive"]},)
             st.plotly_chart(fig12)
 
         if option =="Polarity Score Repartition":
             st.subheader("Number of tweets by polarity")
-            fig21 = px.histogram(df, x="polarity", opacity=0.7, log_y=True)
+            fig21 = px.histogram(df, x="polarity", opacity=0.7, log_y=True,
+                                 color_discrete_sequence=["#1A7C89"])
             st.plotly_chart(fig21)
 
             st.subheader('Tweet polarity by datetime')
-            fig22 = px.line(df.sort_values(by='created_at'), x='created_at', y='polarity')
+            fig22 = px.line(df.sort_values(by='created_at'), x='created_at', y='polarity',
+                            color_discrete_sequence=["#1A7C89"])
             st.plotly_chart(fig22)
 
         if option =="Statistics Description":
@@ -96,9 +101,9 @@ while True:
             y_positive = df.loc[df["sentiment"] == "Positive"]
             y_negative = df.loc[df["sentiment"] == "Negative"]
             fig3 = go.Figure()
-            fig3.add_trace(go.Box(y=y_negative.polarity, name='Negative'))
-            fig3.add_trace(go.Box(y=y_neutral.polarity, name = 'Neutral'))
-            fig3.add_trace(go.Box(y=y_positive.polarity, name = 'Positive'))
+            fig3.add_trace(go.Box(y=y_negative.polarity, name='Negative', marker_color = '#8A3021'))
+            fig3.add_trace(go.Box(y=y_neutral.polarity, name = 'Neutral', marker_color = '#1A7C89'))
+            fig3.add_trace(go.Box(y=y_positive.polarity, name = 'Positive', marker_color = '#D69813'))
             fig3.update_layout(margin=dict(t=0, b=0, l=0, r=0))
             st.subheader("Visualisation of the statistics for each sentiment")
             st.plotly_chart(fig3)
