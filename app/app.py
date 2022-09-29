@@ -3,10 +3,9 @@ import findspark
 import pyfiglet
 import pymongo
 from pyspark.sql import functions as F
-from pyspark.sql.types import StringType, FloatType
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import from_json, col
-from pyspark.sql.types import StringType, StructType, StructField, FloatType
+from pyspark.sql.types import StringType, StructType, StructField, FloatType, IntegerType
 import re
 import time
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
@@ -122,7 +121,8 @@ if __name__ == "__main__":
         StructField("user_tweet_count", IntegerType(), True)
         ])
     
-    df = df.withColumn("value", from_json(col("value").cast("string"), schema))
+    df = df.withColumn("value", 
+                        from_json(col("value").cast("string"), schema))
 
     df = df.select(col('value.user_id').alias('user_id'),
                   col('value.created_at').alias('created_at'),
